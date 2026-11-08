@@ -1,14 +1,14 @@
 import React from 'react'
 import {
   ShieldAlert,
-  Info,
-  CheckCircle2,
-  AlertTriangle,
-  Code2,
   Cpu,
   Layers,
-  Sparkles,
   Compass,
+  Check,
+  FileText,
+  AlertTriangle,
+  GitFork,
+  Activity,
 } from 'lucide-react'
 import { useIncidentContext } from '../../context/IncidentContext'
 
@@ -16,189 +16,177 @@ export const AboutView: React.FC = () => {
   const { setDemoTourStep, setIsTourActive, setActiveTab } = useIncidentContext()
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      {/* Hero Banner */}
-      <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-teal-950/60 border border-teal-500/40 shadow-xl space-y-3">
+    <div className="flex-1 p-4 lg:p-6 space-y-6 bg-[#111317] overflow-y-auto max-w-5xl mx-auto text-zinc-200">
+      {/* Product Overview Header */}
+      <div className="p-5 rounded-lg bg-[#181b22] border border-[#242833] space-y-2.5">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded bg-teal-950 text-teal-300 border border-teal-800">
-            PRIOSIS Hackathon Round 2 · AI for Climate Change
+          <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-[#222631] text-blue-300 border border-[#2e3444]">
+            PRIOSIS Round 2 · AI for Climate Change
           </span>
         </div>
-        <h1 className="text-2xl font-black text-slate-100">
+        <h1 className="text-lg font-semibold tracking-tight text-white">
           PRIORIS: Predictive Response & Operational Intelligence for Resilient Incident Systems
         </h1>
-        <p className="text-sm font-semibold text-teal-400">
+        <p className="text-xs text-zinc-400 font-medium">
           Smarter priorities. Safer communities.
         </p>
-        <p className="text-xs text-slate-300 leading-relaxed max-w-3xl">
-          PRIORIS is an AI-assisted disaster-response decision-support platform designed for emergency incident coordinators during climate-induced extreme events. By deterministically fusing hazard severity, population exposure, social vulnerability, road network accessibility, and resource scarcity, PRIORIS helps emergency operations centers rapidly prioritize urban sectors, allocate specialized rescue assets, and recalculate safe transit corridors around inundated roads.
+        <p className="text-xs text-zinc-300 leading-relaxed max-w-3xl">
+          PRIORIS is a decision-support platform designed for duty officers in emergency operations rooms during urban flood crises. The system deterministically combines hazard severity, population exposure, social vulnerability, road accessibility, and available resources to prioritize affected wards, recommend immediate actions, and compute safe detour corridors around inundated bridges.
         </p>
       </div>
 
-      {/* Governance & Responsible-Use Commitments */}
-      <div className="p-5 rounded-2xl bg-amber-950/20 border border-amber-600/40 space-y-3">
-        <div className="flex items-center gap-2 text-amber-400 font-bold text-sm">
-          <ShieldAlert className="w-5 h-5 shrink-0" />
-          <span>Mandatory Governance & Operational Scope Declarations</span>
+      {/* Operational Scope & Governance */}
+      <div className="p-4 rounded-lg bg-[#181b22] border border-[#242833] space-y-3 text-xs">
+        <div className="flex items-center gap-2 text-white font-semibold">
+          <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
+          <span>Operational Boundaries & Safety Governance</span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-slate-300 pt-1">
-          <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
-            <strong className="text-amber-300 block">Decision-Support, Not Autonomous Command</strong>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
-              PRIORIS strictly supports authorized human incident commanders and municipal commissioners. The system does not autonomously dispatch real emergency vehicles or trigger sirens.
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-zinc-300">
+          <div className="p-3 rounded bg-[#111317] border border-[#242833] space-y-1">
+            <strong className="text-white block text-xs">Decision support, not autonomous command</strong>
+            <p className="text-zinc-400 leading-normal text-xs">
+              PRIORIS provides prioritization recommendations to authorized human coordinators. It does not automatically dispatch real vehicles, issue public sirens, or take civil protection actions without human confirmation.
             </p>
           </div>
 
-          <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
-            <strong className="text-amber-300 block">Does Not Replace 112 / NDMA / IMD</strong>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
-              PRIORIS does not supersede national emergency services (112), National Disaster Management Authority (NDMA), SACHET CAP network, or the India Meteorological Department (IMD).
+          <div className="p-3 rounded bg-[#111317] border border-[#242833] space-y-1">
+            <strong className="text-white block text-xs">Official channels always supersede</strong>
+            <p className="text-zinc-400 leading-normal text-xs">
+              This prototype does not replace India’s national emergency number (112), the NDMA SACHET alert network, or official India Meteorological Department (IMD) bulletins.
             </p>
           </div>
 
-          <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
-            <strong className="text-amber-300 block">Prototype Scoring Heuristics</strong>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
-              The 5-factor risk scoring formula (Hazard 35%, Exposure 25%, Vulnerability 20%, Accessibility 10%, Scarcity 10%) is an exploratory prototype framework that requires empirical validation and localized calibration by civil defense authorities.
+          <div className="p-3 rounded bg-[#111317] border border-[#242833] space-y-1">
+            <strong className="text-white block text-xs">Deterministic 5-factor scoring model</strong>
+            <p className="text-zinc-400 leading-normal text-xs">
+              Scores are calculated via a transparent, weighted formula with zero random drift. Weights: Hazard (35%), Exposure (25%), Vulnerability (20%), Accessibility (10%), and Resource Scarcity (10%).
             </p>
           </div>
 
-          <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
-            <strong className="text-amber-300 block">Simulated Scenario Telemetry</strong>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
-              The portrayed flood incidents, water levels, shelter counts, and response units around Pune, Maharashtra are synthetic scenarios constructed to evaluate deterministic system stability during multi-sector flooding.
+          <div className="p-3 rounded bg-[#111317] border border-[#242833] space-y-1">
+            <strong className="text-white block text-xs">Synthetic scenario data</strong>
+            <p className="text-zinc-400 leading-normal text-xs">
+              The incidents, water levels, shelter occupancy, and response units in the Pune Mutha-Mula river basin are simulated scenarios constructed for testing and evaluation.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Technical Architecture & Live vs Simulated Matrix */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Mathematical Formulation */}
+      <div className="p-4 rounded-lg bg-[#181b22] border border-[#242833] space-y-3">
+        <div className="flex items-center gap-2 text-white font-semibold text-xs border-b border-[#242833] pb-2">
+          <Activity className="w-4 h-4 text-blue-400" />
+          <span>Deterministic Risk Scoring Formula</span>
+        </div>
+
+        <div className="p-3 rounded bg-[#111317] border border-[#242833] space-y-2 text-xs">
+          <div className="font-mono-numbers text-xs text-blue-300 bg-[#161a22] p-2 rounded border border-[#242833]">
+            Risk Score = (Hazard × 0.35) + (Exposure × 0.25) + (Vulnerability × 0.20) + (Accessibility Risk × 0.10) + (Resource Scarcity × 0.10)
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs text-zinc-300 pt-1">
+            <div className="p-2 rounded bg-[#181b22] border border-[#242833]">
+              <span className="text-zinc-400 block text-[11px]">Hazard</span>
+              <span className="font-semibold text-white font-mono-numbers">35%</span>
+            </div>
+            <div className="p-2 rounded bg-[#181b22] border border-[#242833]">
+              <span className="text-zinc-400 block text-[11px]">Exposure</span>
+              <span className="font-semibold text-white font-mono-numbers">25%</span>
+            </div>
+            <div className="p-2 rounded bg-[#181b22] border border-[#242833]">
+              <span className="text-zinc-400 block text-[11px]">Vulnerability</span>
+              <span className="font-semibold text-white font-mono-numbers">20%</span>
+            </div>
+            <div className="p-2 rounded bg-[#181b22] border border-[#242833]">
+              <span className="text-zinc-400 block text-[11px]">Accessibility</span>
+              <span className="font-semibold text-white font-mono-numbers">10%</span>
+            </div>
+            <div className="p-2 rounded bg-[#181b22] border border-[#242833]">
+              <span className="text-zinc-400 block text-[11px]">Scarcity</span>
+              <span className="font-semibold text-white font-mono-numbers">10%</span>
+            </div>
+          </div>
+          <p className="text-xs text-zinc-400 leading-normal pt-1">
+            Scores are normalized between 0 and 100. Priority tiers: Critical (≥ 75), High (55–74.9), Moderate (35–54.9), and Low (&lt; 35).
+          </p>
+        </div>
+      </div>
+
+      {/* Architecture & Provenance Matrix */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Architecture */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-          <div className="flex items-center gap-2 text-slate-100 font-bold text-sm border-b border-slate-800 pb-2">
-            <Cpu className="w-4 h-4 text-teal-400" />
-            <span>Modular Technical Architecture</span>
+        <div className="p-4 rounded-lg bg-[#181b22] border border-[#242833] space-y-2.5">
+          <div className="flex items-center gap-2 text-white font-semibold text-xs border-b border-[#242833] pb-2">
+            <Cpu className="w-4 h-4 text-blue-400" />
+            <span>Technical Architecture</span>
           </div>
 
-          <ul className="space-y-2 text-xs text-slate-300">
+          <ul className="space-y-2.5 text-xs text-zinc-300">
             <li className="flex items-start gap-2">
-              <span className="text-teal-400 font-bold">•</span>
+              <span className="text-blue-400 font-bold">•</span>
               <div>
-                <strong>Deterministic Risk Engine:</strong> Pure mathematical functions in <code className="text-teal-300">riskEngine.ts</code> that compute scores and factor contributions without black-box drift.
+                <strong className="text-white">Deterministic scoring engine:</strong> Pure TypeScript functions in <span className="text-zinc-300 bg-[#111317] px-1.5 py-0.5 rounded font-mono-numbers">riskEngine.ts</span> that calculate normalized multi-factor scores and contributions without nondeterminism.
               </div>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-teal-400 font-bold">•</span>
+              <span className="text-blue-400 font-bold">•</span>
               <div>
-                <strong>Graph Routing Engine:</strong> Custom bidirectional Dijkstra algorithm in <code className="text-teal-300">routingEngine.ts</code> supporting dynamic edge severance and bypass synthesis.
+                <strong className="text-white">Dijkstra graph router:</strong> Bidirectional graph pathfinder in <span className="text-zinc-300 bg-[#111317] px-1.5 py-0.5 rounded font-mono-numbers">routingEngine.ts</span> supporting dynamic arterial severance and safe bypass calculation.
               </div>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-teal-400 font-bold">•</span>
+              <span className="text-blue-400 font-bold">•</span>
               <div>
-                <strong>Explainable AI Assistant:</strong> Natural language explanation generator in <code className="text-teal-300">aiExplanationEngine.ts</code> providing factor delta audits.
+                <strong className="text-white">Explainable natural language logic:</strong> Rule-based synthesis in <span className="text-zinc-300 bg-[#111317] px-1.5 py-0.5 rounded font-mono-numbers">aiExplanationEngine.ts</span> providing plain English factor drivers.
               </div>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-teal-400 font-bold">•</span>
+              <span className="text-blue-400 font-bold">•</span>
               <div>
-                <strong>Geospatial Layer:</strong> Leaflet + OpenStreetMap engine rendering SVG vectors, pulsing incident nodes, and multi-tier route corridors.
+                <strong className="text-white">Geospatial vector mapping:</strong> OpenStreetMap raster tiles rendered via Leaflet with SVG ward boundaries, flood level gauges, and road overlays.
               </div>
             </li>
           </ul>
         </div>
 
-        {/* Live vs Simulated Component Matrix */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-          <div className="flex items-center gap-2 text-slate-100 font-bold text-sm border-b border-slate-800 pb-2">
-            <Layers className="w-4 h-4 text-teal-400" />
-            <span>Data Provenance: Live vs Simulated</span>
+        {/* Provenance Matrix */}
+        <div className="p-4 rounded-lg bg-[#181b22] border border-[#242833] space-y-2.5">
+          <div className="flex items-center gap-2 text-white font-semibold text-xs border-b border-[#242833] pb-2">
+            <Layers className="w-4 h-4 text-blue-400" />
+            <span>Data Provenance Matrix</span>
           </div>
 
           <div className="space-y-2 text-xs">
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
-              <span className="text-slate-300 font-medium">Open-Meteo Weather API</span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-700">
-                LIVE API
+            <div className="p-2.5 rounded bg-[#111317] border border-[#242833] flex items-center justify-between">
+              <span className="text-zinc-300">Open-Meteo Weather API</span>
+              <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-950 text-emerald-300 border border-emerald-800">
+                Live API
               </span>
             </div>
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
-              <span className="text-slate-300 font-medium">OpenStreetMap Cartography</span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-700">
-                LIVE API
+            <div className="p-2.5 rounded bg-[#111317] border border-[#242833] flex items-center justify-between">
+              <span className="text-zinc-300">OpenStreetMap Cartography</span>
+              <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-950 text-emerald-300 border border-emerald-800">
+                Live Tiles
               </span>
             </div>
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
-              <span className="text-slate-300 font-medium">USGS Global Earthquake Feed</span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-700">
-                LIVE API
+            <div className="p-2.5 rounded bg-[#111317] border border-[#242833] flex items-center justify-between">
+              <span className="text-zinc-300">USGS Real-Time Earthquakes</span>
+              <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-950 text-emerald-300 border border-emerald-800">
+                Live API
               </span>
             </div>
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
-              <span className="text-slate-300 font-medium">Pune Flood Incidents & Reports</span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-700">
-                SIMULATED SCENARIO
+            <div className="p-2.5 rounded bg-[#111317] border border-[#242833] flex items-center justify-between">
+              <span className="text-zinc-300">Pune Incidents & Reports</span>
+              <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-amber-950 text-amber-300 border border-amber-800">
+                Simulated
               </span>
             </div>
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
-              <span className="text-slate-300 font-medium">CWC Khadakwasla Dam Spillway</span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-700">
-                SIMULATED TELEMETRY
+            <div className="p-2.5 rounded bg-[#111317] border border-[#242833] flex items-center justify-between">
+              <span className="text-zinc-300">Mutha River Dam Discharge</span>
+              <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-amber-950 text-amber-300 border border-amber-800">
+                Simulated
               </span>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Judge Walkthrough Quick-Start */}
-      <div className="p-5 rounded-2xl bg-slate-900 border border-teal-500/30 space-y-3">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-          <div className="flex items-center gap-2">
-            <Compass className="w-4 h-4 text-teal-400" />
-            <h3 className="text-sm font-bold text-slate-100">
-              Judge Evaluation Walkthrough Guide
-            </h3>
-          </div>
-          <button
-            onClick={() => {
-              setDemoTourStep(1)
-              setIsTourActive(true)
-              setActiveTab('dashboard')
-            }}
-            className="px-3 py-1 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold transition"
-          >
-            Launch Guided Tour
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-xs text-slate-300">
-          <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-            <span className="font-bold text-teal-400 block mb-0.5">Step 1–2: Inspect</span>
-            <span className="text-slate-400 text-[11px]">
-              Open Operations Dashboard; inspect Kasba Peth #1 critical score breakdown.
-            </span>
-          </div>
-
-          <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-            <span className="font-bold text-teal-400 block mb-0.5">Step 3–4: Inundate</span>
-            <span className="text-slate-400 text-[11px]">
-              Create cloudburst incident in Kothrud; watch its score spike and rank shift immediately.
-            </span>
-          </div>
-
-          <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-            <span className="font-bold text-teal-400 block mb-0.5">Step 5–6: Allocate & Block</span>
-            <span className="text-slate-400 text-[11px]">
-              Assign NDRF Boat Unit. Block Karve Road in Route Replanning.
-            </span>
-          </div>
-
-          <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-            <span className="font-bold text-teal-400 block mb-0.5">Step 7–8: Reroute & Audit</span>
-            <span className="text-slate-400 text-[11px]">
-              Inspect Dijkstra bypass route and review chronological audit log.
-            </span>
           </div>
         </div>
       </div>

@@ -51,8 +51,14 @@ interface IncidentContextType {
   isDisclaimerOpen: boolean
   demoTourStep: number
   isTourActive: boolean
+  theme: 'dark' | 'light'
+  language: 'en' | 'mr'
 
   // Actions
+  setTheme: (theme: 'dark' | 'light') => void
+  toggleTheme: () => void
+  toggleLanguage: () => void
+  toggleChecklistStep: (zoneId: string, stepId: string) => void
   setActiveTab: (tab: string) => void
   setSelectedZoneId: (id: string | null) => void
   setSelectedIncidentId: (id: string | null) => void
@@ -113,6 +119,68 @@ export const IncidentProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [isDisclaimerOpen, setIsDisclaimerOpen] = useState<boolean>(false)
   const [demoTourStep, setDemoTourStep] = useState<number>(1)
   const [isTourActive, setIsTourActive] = useState<boolean>(true)
+
+  const [theme, setThemeState] = useState<'dark' | 'light'>(() => {
+    try {
+      const saved = localStorage.getItem('prioris-theme')
+      if (saved === 'light' || saved === 'dark') return saved
+    } catch {
+      // fallback
+    }
+    return 'dark'
+  })
+
+  const setTheme = useCallback((newTheme: 'dark' | 'light') => {
+    setThemeState(newTheme)
+    try {
+      localStorage.setItem('prioris-theme', newTheme)
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  const toggleTheme = useCallback(() => {
+    setThemeState(prev => {
+      const next = prev === 'dark' ? 'light' : 'dark'
+      try {
+        localStorage.setItem('prioris-theme', next)
+      } catch {
+        // ignore
+      }
+      return next
+    })
+  }, [])
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    if (theme === 'light') {
+      document.documentElement.classList.add('light')
+      document.documentElement.classList.remove('dark')
+    } else {
+      document.documentElement.classList.add('dark')
+      document.documentElement.classList.remove('light')
+    }
+  }, [theme])
+
+  const [language, setLanguage] = useState<'en' | 'mr'>('en')
+
+  const toggleLanguage = useCallback(() => {
+    setLanguage(prev => (prev === 'en' ? 'mr' : 'en'))
+  }, [])
+
+  const toggleChecklistStep = useCallback((zoneId: string, stepId: string) => {
+    setZones(prev =>
+      prev.map(z => {
+        if (z.id === zoneId && z.checklistSteps) {
+          const updatedSteps = z.checklistSteps.map(step =>
+            step.id === stepId ? { ...step, isDone: !step.isDone } : step
+          )
+          return { ...z, checklistSteps: updatedSteps }
+        }
+        return z
+      })
+    )
+  }, [])
 
   // Helper to append audit events
   const addAuditLog = useCallback(
@@ -502,6 +570,12 @@ export const IncidentProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         isDisclaimerOpen,
         demoTourStep,
         isTourActive,
+        theme,
+        language,
+        setTheme,
+        toggleTheme,
+        toggleLanguage,
+        toggleChecklistStep,
         setActiveTab,
         setSelectedZoneId,
         setSelectedIncidentId,

@@ -30,12 +30,14 @@ export const INITIAL_ROAD_SEGMENTS: RoadSegment[] = [
   },
   {
     id: 'SEG-02',
-    name: 'J.M. Road (Deccan -> Shivajinagar)',
+    name: 'J.M. Road / Baba Bhide Causeway (Deccan -> Shivajinagar)',
     fromNode: 'N_DECCAN',
     toNode: 'N_SHIVAJINAGAR',
     distanceKm: 2.1,
     speedLimitKmh: 45,
-    isBlocked: false,
+    isBlocked: true,
+    waterDepthCm: 85,
+    blockageReason: 'Baba Bhide causeway flooded, 0.85 m',
     coordinates: [
       [18.5173, 73.8415],
       [18.5242, 73.8431],

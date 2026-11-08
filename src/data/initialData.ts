@@ -1,10 +1,84 @@
-import { Zone, Incident, Resource, Shelter, AuditEvent } from '../types'
+import { Zone, Incident, Resource, Shelter, AuditEvent, ActionChecklistStep } from '../types'
 import { calculateRiskScore, identifyTopDrivers, generateRecommendations } from '../services/riskEngine'
+
+export interface RiverGaugeStation {
+  id: string
+  name: string
+  levelMeters: number
+  trend: 'rising' | 'falling' | 'steady'
+  coordinates: [number, number]
+  status: 'warning' | 'normal' | 'danger'
+}
+
+export const RIVER_GAUGE_STATIONS: RiverGaugeStation[] = [
+  {
+    id: 'G-KHADAKWASLA',
+    name: 'Khadakwasla Dam Spillway',
+    levelMeters: 544.2,
+    trend: 'rising',
+    coordinates: [18.4385, 73.7650],
+    status: 'warning',
+  },
+  {
+    id: 'G-BHIDE',
+    name: 'Baba Bhide Causeway',
+    levelMeters: 1.15,
+    trend: 'rising',
+    coordinates: [18.5173, 73.8415],
+    status: 'danger',
+  },
+  {
+    id: 'G-SANGAM',
+    name: 'Sangam Confluence Bridge',
+    levelMeters: 4.20,
+    trend: 'steady',
+    coordinates: [18.5314, 73.8560],
+    status: 'warning',
+  },
+  {
+    id: 'G-BUNDGARDEN',
+    name: 'Bund Garden Downstream',
+    levelMeters: 3.80,
+    trend: 'rising',
+    coordinates: [18.5362, 73.8821],
+    status: 'warning',
+  },
+]
+
+export const MUTHA_MULA_RIVER_PATHS: [number, number][][] = [
+  // Mutha river flowing from Khadakwasla through Deccan, Sangam
+  [
+    [18.4385, 73.7650],
+    [18.4650, 73.8010],
+    [18.4870, 73.8290],
+    [18.5020, 73.8385],
+    [18.5130, 73.8410],
+    [18.5173, 73.8415], // Baba Bhide
+    [18.5255, 73.8490],
+    [18.5305, 73.8540], // Sangam Confluence
+  ],
+  // Mula river joining from Aundh / Khadki to Sangam
+  [
+    [18.5620, 73.8110],
+    [18.5530, 73.8290],
+    [18.5410, 73.8430],
+    [18.5305, 73.8540], // Sangam Confluence
+  ],
+  // Confluent river flowing from Sangam through Bund Garden to Yerawada
+  [
+    [18.5305, 73.8540],
+    [18.5330, 73.8640],
+    [18.5362, 73.8821], // Bund Garden
+    [18.5480, 73.8960],
+    [18.5580, 73.9140],
+  ],
+]
 
 const rawZonesData = [
   {
     id: 'Z-PUNE-01',
     name: 'Kasba Peth (Old City Core)',
+    nameMr: 'कसबा पेठ',
     wardNumber: 14,
     areaKm2: 1.8,
     center: [18.5204, 73.8567] as [number, number],
@@ -14,6 +88,7 @@ const rawZonesData = [
       [18.5165, 73.8622],
       [18.5148, 73.8532],
       [18.5204, 73.8515],
+      [18.5255, 73.8510],
     ] as [number, number][],
     population: 86000,
     populationDensity: 47700,
@@ -29,10 +104,37 @@ const rawZonesData = [
       resourceScarcity: 72,
     },
     dataFreshnessMinutes: 4,
+    checklistSteps: [
+      {
+        id: 'chk-kasba-1',
+        action: 'Sound evacuation siren in low-lying Kasba Peth lanes',
+        urgency: 'Do now' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-kasba-2',
+        action: 'Stage SDRF swift-water team at Shaniwar Wada',
+        urgency: 'Do now' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-kasba-3',
+        action: 'Evacuate 35 vulnerable elderly to Shaniwar Peth Hall',
+        urgency: 'Within 30 min' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-kasba-4',
+        action: 'Use high-clearance vehicles; causeways are submerged',
+        urgency: 'Within 30 min' as const,
+        isDone: false,
+      },
+    ],
   },
   {
     id: 'Z-PUNE-02',
     name: 'Shivajinagar (Confluence Basin)',
+    nameMr: 'शिवाजीनगर',
     wardNumber: 9,
     areaKm2: 3.4,
     center: [18.5314, 73.8446] as [number, number],
@@ -41,6 +143,7 @@ const rawZonesData = [
       [18.5410, 73.8540],
       [18.5270, 73.8580],
       [18.5225, 73.8410],
+      [18.5385, 73.8375],
     ] as [number, number][],
     population: 112000,
     populationDensity: 32900,
@@ -56,10 +159,37 @@ const rawZonesData = [
       resourceScarcity: 58,
     },
     dataFreshnessMinutes: 2,
+    checklistSteps: [
+      {
+        id: 'chk-shivaji-1',
+        action: 'Deploy traffic police to seal flooded Sangam underpass',
+        urgency: 'Do now' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-shivaji-2',
+        action: 'Stand by NDRF inflatable boat unit at COEP Annexe',
+        urgency: 'Within 30 min' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-shivaji-3',
+        action: 'Pre-position dewatering suction pumps along subway line',
+        urgency: 'Within 30 min' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-shivaji-4',
+        action: 'Divert arterial traffic onto Sangamwadi elevated flyover',
+        urgency: 'Within 1 hr' as const,
+        isDone: false,
+      },
+    ],
   },
   {
     id: 'Z-PUNE-03',
     name: 'Deccan Gymkhana (Pulachi Wadi)',
+    nameMr: 'डेक्कन जिमखाना',
     wardNumber: 11,
     areaKm2: 2.1,
     center: [18.5173, 73.8415] as [number, number],
@@ -68,6 +198,7 @@ const rawZonesData = [
       [18.5245, 73.8480],
       [18.5115, 73.8475],
       [18.5100, 73.8360],
+      [18.5230, 73.8340],
     ] as [number, number][],
     population: 64000,
     populationDensity: 30400,
@@ -83,10 +214,37 @@ const rawZonesData = [
       resourceScarcity: 62,
     },
     dataFreshnessMinutes: 6,
+    checklistSteps: [
+      {
+        id: 'chk-deccan-1',
+        action: 'Close Baba Bhide causeway barrier gates immediately',
+        urgency: 'Do now' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-deccan-2',
+        action: 'Warn Pulachi Wadi riverside shanties of 0.8m overtopping',
+        urgency: 'Do now' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-deccan-3',
+        action: 'Inspect Lakdi Pul bridge pier clearance against drift debris',
+        urgency: 'Within 30 min' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-deccan-4',
+        action: 'Stage ambulance unit at Deccan Gymkhana fire station',
+        urgency: 'Within 1 hr' as const,
+        isDone: false,
+      },
+    ],
   },
   {
     id: 'Z-PUNE-04',
     name: 'Yerawada (Bund Garden Downstream)',
+    nameMr: 'येरवडा',
     wardNumber: 6,
     areaKm2: 4.2,
     center: [18.5529, 73.8838] as [number, number],
@@ -95,6 +253,7 @@ const rawZonesData = [
       [18.5645, 73.8960],
       [18.5440, 73.8945],
       [18.5420, 73.8765],
+      [18.5620, 73.8740],
     ] as [number, number][],
     population: 138000,
     populationDensity: 32800,
@@ -110,10 +269,37 @@ const rawZonesData = [
       resourceScarcity: 52,
     },
     dataFreshnessMinutes: 12,
+    checklistSteps: [
+      {
+        id: 'chk-yer-1',
+        action: 'Monitor Bund Garden downstream mudflats for earthen seepage',
+        urgency: 'Do now' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-yer-2',
+        action: 'Pre-alert Shanti Nagar informal settlement coordinators',
+        urgency: 'Within 30 min' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-yer-3',
+        action: 'Prepare Yerawada Municipal Secondary School relief shelter',
+        urgency: 'Within 1 hr' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-yer-4',
+        action: 'Ready motorized rubber boats for nocturnal river surge',
+        urgency: 'Within 1 hr' as const,
+        isDone: false,
+      },
+    ],
   },
   {
     id: 'Z-PUNE-05',
     name: 'Kothrud (Ramnadi Corridor)',
+    nameMr: 'कोथरूड',
     wardNumber: 18,
     areaKm2: 5.8,
     center: [18.5074, 73.8077] as [number, number],
@@ -122,6 +308,7 @@ const rawZonesData = [
       [18.5210, 73.8210],
       [18.4980, 73.8200],
       [18.4950, 73.7960],
+      [18.5180, 73.7920],
     ] as [number, number][],
     population: 145000,
     populationDensity: 25000,
@@ -137,10 +324,37 @@ const rawZonesData = [
       resourceScarcity: 32,
     },
     dataFreshnessMinutes: 8,
+    checklistSteps: [
+      {
+        id: 'chk-koth-1',
+        action: 'Monitor Ramnadi culvert drainage along Paud Road',
+        urgency: 'Within 30 min' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-koth-2',
+        action: 'Clear accumulated tree debris at Karve Road underpass',
+        urgency: 'Within 1 hr' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-koth-3',
+        action: 'Inspect stormwater channels near Kothrud bus depot',
+        urgency: 'Within 1 hr' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-koth-4',
+        action: 'Keep PMC quick-response tender on local patrol',
+        urgency: 'Within 1 hr' as const,
+        isDone: false,
+      },
+    ],
   },
   {
     id: 'Z-PUNE-06',
     name: 'Hadapsar (Malwadi Canal Sector)',
+    nameMr: 'हडपसर',
     wardNumber: 22,
     areaKm2: 6.4,
     center: [18.5015, 73.9264] as [number, number],
@@ -149,6 +363,7 @@ const rawZonesData = [
       [18.5170, 73.9420],
       [18.4900, 73.9410],
       [18.4880, 73.9140],
+      [18.5140, 73.9110],
     ] as [number, number][],
     population: 168000,
     populationDensity: 26200,
@@ -164,6 +379,32 @@ const rawZonesData = [
       resourceScarcity: 38,
     },
     dataFreshnessMinutes: 15,
+    checklistSteps: [
+      {
+        id: 'chk-had-1',
+        action: 'Monitor canal overflow sluice gates near Gadital',
+        urgency: 'Within 30 min' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-had-2',
+        action: 'Inspect low-lying settlements along Solapur highway',
+        urgency: 'Within 1 hr' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-had-3',
+        action: 'Ready relief supplies at Hadapsar municipal depot',
+        urgency: 'Within 1 hr' as const,
+        isDone: false,
+      },
+      {
+        id: 'chk-had-4',
+        action: 'Verify pump station standby electricity supply',
+        urgency: 'Within 1 hr' as const,
+        isDone: false,
+      },
+    ],
   },
 ]
 

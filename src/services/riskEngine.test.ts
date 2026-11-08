@@ -15,7 +15,7 @@ import { INITIAL_ZONES, INITIAL_RESOURCES } from '../data/initialData'
 function assert(condition: boolean, msg: string) {
   if (!condition) {
     console.error(`❌ TEST FAILED: ${msg}`)
-    process.exit(1)
+    throw new Error(`TEST FAILED: ${msg}`)
   } else {
     console.log(`✓ PASS: ${msg}`)
   }
@@ -108,3 +108,4 @@ assert(comp.factorDeltas.length === 5, 'Provides breakdown for all 5 factors')
 assert(comp.primaryDifferentiator.length > 0, 'Identifies primary mathematical differentiator')
 
 console.log('\n🎉 ALL 18 UNIT & INTEGRATION TESTS PASSED CLEANLY!')
+

@@ -14,4 +14,24 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server: {
+    proxy: {
+      '/api/nugen': {
+        target: 'https://api.nugen.in',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api\/nugen/, ''),
+      },
+    },
+  },
+  preview: {
+    proxy: {
+      '/api/nugen': {
+        target: 'https://api.nugen.in',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api\/nugen/, ''),
+      },
+    },
+  },
 })

@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
 import {
   AlertTriangle,
-  Flame,
   LifeBuoy,
   GitFork,
   Activity,
-  ArrowUpRight,
+  ArrowRight,
   Clock,
   ShieldAlert,
   ChevronRight,
-  TrendingUp,
   Radio,
   Sparkles,
+  Layers,
+  ChevronDown,
 } from 'lucide-react'
 import { useIncidentContext } from '../../context/IncidentContext'
 import { LeafletMap } from '../map/LeafletMap'
@@ -31,6 +31,7 @@ export const OperationsDashboard: React.FC = () => {
     setActiveTab,
     toggleRoadBlockage,
     activeRouteResult,
+    hydrology,
   } = useIncidentContext()
 
   const [filterPriority, setFilterPriority] = useState<string>('all')
@@ -48,160 +49,133 @@ export const OperationsDashboard: React.FC = () => {
     return z.priority.toLowerCase() === filterPriority.toLowerCase()
   })
 
-  // Executive AI briefing
   const situationalBriefing = generateSituationalBriefing(zones, incidents, resources)
 
   return (
-    <div className="space-y-6">
-      {/* KPI Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1: Active Incidents */}
-        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 shadow-md space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Active Incidents
-            </span>
-            <div className="p-1.5 rounded-lg bg-red-950/60 border border-red-800/60 text-red-400">
-              <AlertTriangle className="w-4 h-4" />
-            </div>
+    <div className="space-y-4">
+      {/* Precision Operational Telemetry Bar (No generic cards) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 border-b border-[#1b253b] pb-3">
+        <div className="p-3 bg-[#0a0f1b] border border-[#1b263c] rounded space-y-1">
+          <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-zinc-500">
+            <span>ACTIVE INUNDATIONS</span>
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-slate-100">{activeIncidents.length}</span>
-            <span className="text-xs text-red-400 font-semibold">
-              {incidents.filter(i => i.severity === 'critical').length} Critical Inundations
+            <span className="text-2xl font-mono font-bold text-white tracking-tight">{activeIncidents.length}</span>
+            <span className="text-[10px] text-red-400 font-mono font-medium">
+              {incidents.filter(i => i.severity === 'critical').length} CRITICAL
             </span>
           </div>
-          <div className="text-[11px] text-slate-400 flex items-center justify-between pt-1 border-t border-slate-800">
+          <div className="text-[10px] text-zinc-500 flex justify-between pt-1 border-t border-[#162033]">
             <span>Resolved: {incidents.filter(i => i.status === 'resolved').length}</span>
             <button
               onClick={() => setActiveTab('incidents')}
-              className="text-teal-400 hover:text-teal-300 font-semibold flex items-center gap-0.5"
+              className="text-teal-400 hover:text-teal-300 font-medium"
             >
-              <span>Explorer</span>
-              <ChevronRight className="w-3 h-3" />
+              View Feed →
             </button>
           </div>
         </div>
 
-        {/* Card 2: High Priority Zones */}
-        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 shadow-md space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              High / Critical Zones
-            </span>
-            <div className="p-1.5 rounded-lg bg-amber-950/60 border border-amber-800/60 text-amber-400">
-              <ShieldAlert className="w-4 h-4" />
-            </div>
+        <div className="p-3 bg-[#0a0f1b] border border-[#1b263c] rounded space-y-1">
+          <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-zinc-500">
+            <span>HIGH-RISK SECTORS</span>
+            <ShieldAlert className="w-3.5 h-3.5 text-red-400" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-slate-100">{criticalCount + highCount}</span>
-            <span className="text-xs text-slate-400">of {zones.length} monitored sectors</span>
+            <span className="text-2xl font-mono font-bold text-white tracking-tight">{criticalCount + highCount}</span>
+            <span className="text-[10px] text-zinc-400 font-mono">OF {zones.length} MONITORED</span>
           </div>
-          <div className="text-[11px] text-slate-400 flex items-center justify-between pt-1 border-t border-slate-800">
-            <span>Top Sector: <strong className="text-red-400">{rankedZones[0]?.name.split(' ')[0]}</strong></span>
+          <div className="text-[10px] text-zinc-500 flex justify-between pt-1 border-t border-[#162033]">
+            <span>Lead: <strong className="text-red-400 font-semibold">{rankedZones[0]?.name.split(' ')[0]}</strong></span>
             <button
               onClick={() => setActiveTab('risk')}
-              className="text-teal-400 hover:text-teal-300 font-semibold flex items-center gap-0.5"
+              className="text-teal-400 hover:text-teal-300 font-medium"
             >
-              <span>Explain</span>
-              <ChevronRight className="w-3 h-3" />
+              Inspect Weights →
             </button>
           </div>
         </div>
 
-        {/* Card 3: Available Response Units */}
-        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 shadow-md space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Available Units
-            </span>
-            <div className="p-1.5 rounded-lg bg-emerald-950/60 border border-emerald-800/60 text-emerald-400">
-              <LifeBuoy className="w-4 h-4" />
-            </div>
+        <div className="p-3 bg-[#0a0f1b] border border-[#1b263c] rounded space-y-1">
+          <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-zinc-500">
+            <span>FLEET READINESS</span>
+            <LifeBuoy className="w-3.5 h-3.5 text-teal-400" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-slate-100">{availableUnits.length}</span>
-            <span className="text-xs text-emerald-400 font-semibold">
-              Ready for immediate dispatch
+            <span className="text-2xl font-mono font-bold text-white tracking-tight">{availableUnits.length}</span>
+            <span className="text-[10px] text-teal-400 font-mono font-medium">
+              READY / {resources.length} TOTAL
             </span>
           </div>
-          <div className="text-[11px] text-slate-400 flex items-center justify-between pt-1 border-t border-slate-800">
+          <div className="text-[10px] text-zinc-500 flex justify-between pt-1 border-t border-[#162033]">
             <span>Deployed: {resources.filter(r => r.status === 'assigned').length} units</span>
             <button
               onClick={() => setActiveTab('resources')}
-              className="text-teal-400 hover:text-teal-300 font-semibold flex items-center gap-0.5"
+              className="text-teal-400 hover:text-teal-300 font-medium"
             >
-              <span>Allocate</span>
-              <ChevronRight className="w-3 h-3" />
+              Deploy Units →
             </button>
           </div>
         </div>
 
-        {/* Card 4: Blocked Corridors */}
-        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 shadow-md space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Blocked Corridors
-            </span>
-            <div className="p-1.5 rounded-lg bg-red-950/60 border border-red-800/60 text-red-400">
-              <GitFork className="w-4 h-4" />
-            </div>
+        <div className="p-3 bg-[#0a0f1b] border border-[#1b263c] rounded space-y-1">
+          <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-zinc-500">
+            <span>CORRIDOR PASSABILITY</span>
+            <GitFork className="w-3.5 h-3.5 text-cyan-400" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-slate-100">{blockedRoutes.length}</span>
-            <span className={`text-xs font-semibold ${blockedRoutes.length > 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-              {blockedRoutes.length > 0 ? 'Detours Active' : 'All Passable'}
+            <span className="text-2xl font-mono font-bold text-white tracking-tight">{blockedRoutes.length}</span>
+            <span className={`text-[10px] font-mono font-medium ${blockedRoutes.length > 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+              {blockedRoutes.length > 0 ? 'CORRIDORS SEVERED' : 'ALL CLEAR'}
             </span>
           </div>
-          <div className="text-[11px] text-slate-400 flex items-center justify-between pt-1 border-t border-slate-800">
-            <span>Network: 14 Segments</span>
+          <div className="text-[10px] text-zinc-500 flex justify-between pt-1 border-t border-[#162033]">
+            <span>Network: 14 Links</span>
             <button
               onClick={() => setActiveTab('routing')}
-              className="text-teal-400 hover:text-teal-300 font-semibold flex items-center gap-0.5"
+              className="text-teal-400 hover:text-teal-300 font-medium"
             >
-              <span>Replanning</span>
-              <ChevronRight className="w-3 h-3" />
+              Reroute Engine →
             </button>
           </div>
         </div>
       </div>
 
-      {/* AI Situational Briefing Banner */}
-      <div className="p-3.5 rounded-xl bg-slate-900/90 border border-teal-500/30 flex items-start gap-3 shadow-md">
-        <div className="p-2 rounded-lg bg-teal-500/15 border border-teal-400/30 text-teal-400 shrink-0 mt-0.5">
-          <Sparkles className="w-4 h-4" />
+      {/* Structured Situational Directives */}
+      <div className="p-3 bg-[#0b101c] border border-[#1c273e] rounded flex items-start gap-3">
+        <div className="p-1.5 rounded bg-[#101726] border border-[#1f2b42] text-teal-400 shrink-0 mt-0.5">
+          <Activity className="w-3.5 h-3.5" />
         </div>
-        <div className="text-xs text-slate-300 space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-teal-300 uppercase tracking-wide">
-              Autonomous AI Situational Briefing
+        <div className="text-xs space-y-1 flex-1">
+          <div className="flex items-center justify-between">
+            <span className="font-mono text-[10px] uppercase font-bold text-zinc-400 tracking-wider">
+              OPERATIONAL SITUATION DIRECTIVE · AUTO-SYNTHESIZED
             </span>
-            <span className="text-[10px] text-slate-400">Updated Real-Time</span>
+            <span className="text-[9px] font-mono text-zinc-500">MODEL REFRESH: REAL-TIME</span>
           </div>
-          <p className="leading-relaxed text-slate-300 whitespace-pre-line font-mono text-[11px]">
+          <p className="text-[11px] font-mono text-zinc-300 leading-relaxed whitespace-pre-line">
             {situationalBriefing}
           </p>
         </div>
       </div>
 
-      {/* Main Grid: Interactive Map + Ranked Zones */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left 7 Cols: Interactive Leaflet Map */}
-        <div className="lg:col-span-7 space-y-3">
+      {/* Main Command Grid: Geospatial Map + Operational Queue */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* Left 7 Cols: Tactical Map */}
+        <div className="lg:col-span-7 space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-slate-100">
-                Geospatial Operational Map
-              </h2>
-              <span className="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
-                Pune Urban Basin
+              <span className="text-xs font-bold text-zinc-200 uppercase tracking-tight">
+                Geospatial Command Map
+              </span>
+              <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-[#0d1422] text-zinc-400 border border-[#1e2a42]">
+                MUTHA-MULA CONFLUENCE
               </span>
             </div>
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-teal-400"></span>
-                <span>Live OSM Tiles</span>
-              </span>
+            <div className="flex items-center gap-2 text-[10px] font-mono text-zinc-500">
+              <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
+              <span>LIVE CARTO TILES</span>
             </div>
           </div>
 
@@ -219,24 +193,28 @@ export const OperationsDashboard: React.FC = () => {
           />
         </div>
 
-        {/* Right 5 Cols: Ranked Zone Priority Queue */}
-        <div className="lg:col-span-5 space-y-3">
+        {/* Right 5 Cols: Prioritized Ward Operational Queue */}
+        <div className="lg:col-span-5 space-y-2">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
-              <Activity className="w-4 h-4 text-teal-400" />
-              <span>Prioritized Zone Queue</span>
-            </h2>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-zinc-200 uppercase tracking-tight">
+                Prioritized Ward Queue
+              </span>
+              <span className="text-[10px] font-mono text-zinc-500">
+                ({filteredZones.length})
+              </span>
+            </div>
 
-            {/* Filter tabs */}
-            <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-[11px]">
+            {/* Filter Pills */}
+            <div className="flex items-center gap-0.5 bg-[#0a0f1a] p-0.5 rounded border border-[#1b253b] text-[10px] font-mono">
               {['all', 'critical', 'high', 'moderate'].map(f => (
                 <button
                   key={f}
                   onClick={() => setFilterPriority(f)}
-                  className={`px-2 py-0.5 rounded capitalize font-medium transition ${
+                  className={`px-2 py-0.5 rounded uppercase font-medium transition-colors ${
                     filterPriority === f
-                      ? 'bg-teal-600 text-white'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-[#182338] text-teal-300 font-bold'
+                      : 'text-zinc-500 hover:text-zinc-300'
                   }`}
                 >
                   {f}
@@ -245,100 +223,102 @@ export const OperationsDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Scrollable Ranked Zone Cards */}
-          <div className="space-y-2.5 max-h-[520px] overflow-y-auto pr-1">
+          {/* Queue List */}
+          <div className="space-y-1.5 max-h-[520px] overflow-y-auto pr-1">
             {filteredZones.map((zone, index) => {
               const isSelected = zone.id === selectedZoneId
-              const badgeClass =
+              const priorityClass =
                 zone.priority === 'Critical'
-                  ? 'bg-red-950 text-red-300 border-red-700'
+                  ? 'bg-red-950/70 text-red-300 border-red-800/80'
                   : zone.priority === 'High'
-                  ? 'bg-amber-950 text-amber-300 border-amber-700'
+                  ? 'bg-amber-950/70 text-amber-300 border-amber-800/80'
                   : zone.priority === 'Moderate'
-                  ? 'bg-yellow-950 text-yellow-300 border-yellow-700'
-                  : 'bg-emerald-950 text-emerald-300 border-emerald-700'
+                  ? 'bg-yellow-950/70 text-yellow-300 border-yellow-800/80'
+                  : 'bg-emerald-950/70 text-emerald-300 border-emerald-800/80'
 
               return (
                 <div
                   key={zone.id}
                   onClick={() => setSelectedZoneId(zone.id)}
-                  className={`p-3 rounded-xl border transition-all cursor-pointer relative ${
+                  className={`p-2.5 rounded border cursor-pointer transition-colors ${
                     isSelected
-                      ? 'bg-slate-900 border-teal-500 shadow-lg shadow-teal-950/40'
-                      : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900'
+                      ? 'bg-[#101726] border-teal-500/80 shadow-sm'
+                      : 'bg-[#0a0f1b] border-[#1a2336] hover:border-[#283857] hover:bg-[#0e1524]'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-slate-800 text-[11px] font-bold text-slate-300 flex items-center justify-center">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-mono text-[10px] text-zinc-500 font-bold">
                           #{index + 1}
                         </span>
-                        <h3 className="font-bold text-sm text-slate-100 hover:text-teal-300 transition">
+                        <h4 className="font-semibold text-xs text-white">
                           {zone.name}
-                        </h3>
+                        </h4>
                       </div>
-                      <div className="text-[11px] text-slate-400 flex items-center gap-3">
-                        <span>Ward {zone.wardNumber}</span>
-                        <span>Pop: {zone.population.toLocaleString()}</span>
-                        <span>Incidents: {zone.activeIncidentCount}</span>
+                      <div className="text-[10px] font-mono text-zinc-400 flex items-center gap-2">
+                        <span>W{zone.wardNumber}</span>
+                        <span className="text-zinc-600">·</span>
+                        <span>POP {zone.population.toLocaleString()}</span>
+                        <span className="text-zinc-600">·</span>
+                        <span>INC: <strong className="text-zinc-300">{zone.activeIncidentCount}</strong></span>
                       </div>
                     </div>
 
                     <div className="flex flex-col items-end">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${badgeClass}`}>
+                      <span className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold tracking-wider border ${priorityClass}`}>
                         {zone.priority}
                       </span>
-                      <span className="text-xl font-black text-slate-100 mt-0.5">
+                      <span className="text-sm font-mono font-bold text-white mt-0.5">
                         {zone.riskScore}
-                        <span className="text-xs font-normal text-slate-400">/100</span>
+                        <span className="text-[10px] font-normal text-zinc-500">/100</span>
                       </span>
                     </div>
                   </div>
 
-                  {/* Factor Progress Bars mini */}
-                  <div className="grid grid-cols-5 gap-1.5 mt-2.5 pt-2 border-t border-slate-800/80 text-[10px]">
+                  {/* Factor Contribution Micro-Bars */}
+                  <div className="grid grid-cols-5 gap-1 mt-2 pt-1.5 border-t border-[#172134] text-[9px] font-mono">
                     <div>
-                      <span className="text-slate-400 text-[9px] block">Hazard (35%)</span>
-                      <div className="w-full bg-slate-800 h-1 rounded-full mt-0.5">
-                        <div className="h-full bg-red-500 rounded-full" style={{ width: `${zone.factors.hazard}%` }} />
+                      <span className="text-zinc-500 block text-[8px]">HAZ</span>
+                      <div className="w-full bg-[#182337] h-1 rounded-sm mt-0.5">
+                        <div className="h-full bg-red-500 rounded-sm" style={{ width: `${zone.factors.hazard}%` }} />
                       </div>
-                      <span className="text-slate-300 font-mono mt-0.5 block">{zone.factors.hazard}</span>
+                      <span className="text-zinc-400">{zone.factors.hazard}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 text-[9px] block">Expo (25%)</span>
-                      <div className="w-full bg-slate-800 h-1 rounded-full mt-0.5">
-                        <div className="h-full bg-amber-500 rounded-full" style={{ width: `${zone.factors.exposure}%` }} />
+                      <span className="text-zinc-500 block text-[8px]">EXP</span>
+                      <div className="w-full bg-[#182337] h-1 rounded-sm mt-0.5">
+                        <div className="h-full bg-amber-500 rounded-sm" style={{ width: `${zone.factors.exposure}%` }} />
                       </div>
-                      <span className="text-slate-300 font-mono mt-0.5 block">{zone.factors.exposure}</span>
+                      <span className="text-zinc-400">{zone.factors.exposure}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 text-[9px] block">Vuln (20%)</span>
-                      <div className="w-full bg-slate-800 h-1 rounded-full mt-0.5">
-                        <div className="h-full bg-yellow-500 rounded-full" style={{ width: `${zone.factors.vulnerability}%` }} />
+                      <span className="text-zinc-500 block text-[8px]">VUL</span>
+                      <div className="w-full bg-[#182337] h-1 rounded-sm mt-0.5">
+                        <div className="h-full bg-yellow-500 rounded-sm" style={{ width: `${zone.factors.vulnerability}%` }} />
                       </div>
-                      <span className="text-slate-300 font-mono mt-0.5 block">{zone.factors.vulnerability}</span>
+                      <span className="text-zinc-400">{zone.factors.vulnerability}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 text-[9px] block">Access (10%)</span>
-                      <div className="w-full bg-slate-800 h-1 rounded-full mt-0.5">
-                        <div className="h-full bg-cyan-500 rounded-full" style={{ width: `${zone.factors.accessibilityRisk}%` }} />
+                      <span className="text-zinc-500 block text-[8px]">ACC</span>
+                      <div className="w-full bg-[#182337] h-1 rounded-sm mt-0.5">
+                        <div className="h-full bg-cyan-500 rounded-sm" style={{ width: `${zone.factors.accessibilityRisk}%` }} />
                       </div>
-                      <span className="text-slate-300 font-mono mt-0.5 block">{zone.factors.accessibilityRisk}</span>
+                      <span className="text-zinc-400">{zone.factors.accessibilityRisk}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 text-[9px] block">Scarce (10%)</span>
-                      <div className="w-full bg-slate-800 h-1 rounded-full mt-0.5">
-                        <div className="h-full bg-purple-500 rounded-full" style={{ width: `${zone.factors.resourceScarcity}%` }} />
+                      <span className="text-zinc-500 block text-[8px]">SCA</span>
+                      <div className="w-full bg-[#182337] h-1 rounded-sm mt-0.5">
+                        <div className="h-full bg-purple-500 rounded-sm" style={{ width: `${zone.factors.resourceScarcity}%` }} />
                       </div>
-                      <span className="text-slate-300 font-mono mt-0.5 block">{zone.factors.resourceScarcity}</span>
+                      <span className="text-zinc-400">{zone.factors.resourceScarcity}</span>
                     </div>
                   </div>
 
-                  {/* Recommended Action Pill */}
-                  <div className="mt-2 text-[11px] text-teal-300 bg-teal-950/40 p-2 rounded-lg border border-teal-900/50 flex items-start gap-1.5">
-                    <span className="font-bold shrink-0">Rec:</span>
-                    <span className="line-clamp-1">{zone.recommendedActions[0]}</span>
+                  {/* Primary Recommendation Line */}
+                  <div className="mt-1.5 text-[10px] text-teal-300 font-mono bg-[#0c1422] p-1 rounded border border-[#18253a] flex items-center gap-1">
+                    <span className="text-teal-400 font-bold shrink-0">REC:</span>
+                    <span className="truncate">{zone.recommendedActions[0]}</span>
                   </div>
                 </div>
               )
@@ -347,97 +327,91 @@ export const OperationsDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom Grid: Selected Zone Action Deep Dive + Audit Event Feed */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Selected Zone Inspection Panel */}
-        <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+      {/* Target Sector Directives & Mission Event Ledger */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* Target Sector Focus Panel */}
+        <div className="lg:col-span-7 bg-[#0a0f1b] border border-[#1b253b] rounded p-3 space-y-2.5">
+          <div className="flex items-center justify-between border-b border-[#172134] pb-2">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs uppercase font-bold tracking-wider text-teal-400">
-                  Target Sector Focus
+                <span className="text-[10px] font-mono uppercase font-bold tracking-wider text-teal-400">
+                  Target Sector Telemetry
                 </span>
-                <span className="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-[#101726] text-zinc-400 border border-[#1d2940]">
                   Ward {selectedZone.wardNumber}
                 </span>
               </div>
-              <h3 className="text-lg font-black text-slate-100">{selectedZone.name}</h3>
+              <h3 className="text-sm font-bold text-white mt-0.5">{selectedZone.name}</h3>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setActiveTab('risk')}
-                className="px-3 py-1.5 rounded-lg bg-teal-600/30 hover:bg-teal-600/50 text-teal-300 border border-teal-500/50 text-xs font-semibold transition"
+                className="px-2.5 py-1 rounded bg-[#121c2e] hover:bg-[#18253d] text-teal-300 border border-[#233554] text-[11px] font-medium transition-colors"
               >
-                Deep Factor Analysis
+                Analyze Factors
               </button>
               <button
                 onClick={() => setActiveTab('resources')}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition"
+                className="px-2.5 py-1 rounded bg-teal-500 hover:bg-teal-400 text-slate-950 text-[11px] font-semibold transition-colors"
               >
                 Dispatch Units
               </button>
             </div>
           </div>
 
-          {/* Primary Ranking Drivers */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800 space-y-1.5">
-              <span className="font-bold text-slate-300 uppercase tracking-wide text-[10px]">
-                Top Ranking Drivers
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px]">
+            <div className="p-2.5 rounded bg-[#070b13] border border-[#162033] space-y-1">
+              <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-zinc-500 block">
+                PRIMARY RISK DRIVERS
               </span>
-              <ul className="space-y-1 text-slate-300 text-[11px]">
+              <ul className="space-y-0.5 text-zinc-300 font-mono text-[10px]">
                 {selectedZone.topDrivers.map((d, i) => (
-                  <li key={i} className="flex items-start gap-1.5">
-                    <span className="text-teal-400 font-bold">•</span>
+                  <li key={i} className="flex items-start gap-1">
+                    <span className="text-teal-400">›</span>
                     <span>{d}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800 space-y-1.5">
-              <span className="font-bold text-slate-300 uppercase tracking-wide text-[10px]">
-                Field Response Actions
+            <div className="p-2.5 rounded bg-[#070b13] border border-[#162033] space-y-1">
+              <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-zinc-500 block">
+                TACTICAL RECOMMENDATIONS
               </span>
-              <ul className="space-y-1 text-slate-300 text-[11px]">
+              <ul className="space-y-0.5 text-zinc-300 font-mono text-[10px]">
                 {selectedZone.recommendedActions.slice(0, 3).map((a, i) => (
-                  <li key={i} className="flex items-start gap-1.5">
-                    <span className="text-amber-400 font-bold">→</span>
+                  <li key={i} className="flex items-start gap-1">
+                    <span className="text-amber-400">›</span>
                     <span>{a}</span>
                   </li>
                 ))}
               </ul>
             </div>
           </div>
-
-          <div className="text-[11px] text-slate-400 flex items-center justify-between pt-1">
-            <span>Last Sensor Synchronization: <strong>{selectedZone.dataFreshnessMinutes} mins ago</strong></span>
-            <span>Assigned Units: <strong className="text-teal-400">{selectedZone.assignedResourceIds.length}</strong></span>
-          </div>
         </div>
 
-        {/* Audit Log / Event Feed */}
-        <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-            <h3 className="font-bold text-sm text-slate-100 flex items-center gap-1.5">
-              <Clock className="w-4 h-4 text-teal-400" />
-              <span>Real-Time Audit Trail</span>
-            </h3>
-            <span className="text-[10px] text-slate-400">Deterministic Log</span>
+        {/* Mission Event Ledger (Audit Log) */}
+        <div className="lg:col-span-5 bg-[#0a0f1b] border border-[#1b253b] rounded p-3 space-y-2">
+          <div className="flex items-center justify-between border-b border-[#172134] pb-1.5">
+            <span className="text-[10px] font-mono uppercase font-bold tracking-wider text-zinc-400 flex items-center gap-1.5">
+              <Clock className="w-3 h-3 text-teal-400" />
+              <span>Real-Time Audit Ledger</span>
+            </span>
+            <span className="text-[9px] font-mono text-zinc-500">TAMPER-EVIDENT</span>
           </div>
 
-          <div className="space-y-2 max-h-[170px] overflow-y-auto pr-1">
-            {auditLogs.slice(0, 6).map(log => (
+          <div className="space-y-1.5 max-h-[140px] overflow-y-auto pr-1">
+            {auditLogs.slice(0, 5).map(log => (
               <div
                 key={log.id}
-                className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 text-[11px] space-y-0.5"
+                className="p-1.5 rounded bg-[#070b13] border border-[#162033] text-[10px] font-mono space-y-0.5"
               >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-slate-200">{log.title}</span>
-                  <span className="text-[10px] font-mono text-slate-400">{log.timestamp}</span>
+                <div className="flex items-center justify-between text-zinc-300">
+                  <span className="font-semibold text-zinc-200 truncate">{log.title}</span>
+                  <span className="text-zinc-500 text-[9px] ml-2 shrink-0">{log.timestamp}</span>
                 </div>
-                <p className="text-slate-400 text-[10px] leading-relaxed line-clamp-2">
+                <p className="text-zinc-400 text-[9px] leading-tight line-clamp-1">
                   {log.details}
                 </p>
               </div>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { AlertTriangle, X, ShieldCheck, CheckCircle2 } from 'lucide-react'
+import { X, ShieldAlert, Check } from 'lucide-react'
 import { useIncidentContext } from '../../context/IncidentContext'
 
 export const DisclaimerModal: React.FC = () => {
@@ -8,75 +8,81 @@ export const DisclaimerModal: React.FC = () => {
   if (!isDisclaimerOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-xl w-full p-6 shadow-2xl relative space-y-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+      <div className="bg-[#0b101c] border border-[#202b40] rounded-lg max-w-xl w-full p-6 shadow-2xl relative space-y-4 text-zinc-200">
         {/* Close Button */}
         <button
           onClick={() => setIsDisclaimerOpen(false)}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-100 p-1 rounded-lg hover:bg-slate-800 transition"
+          className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-200 p-1 rounded hover:bg-[#162136] transition-colors"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
 
         {/* Modal Header */}
-        <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
-            <AlertTriangle className="w-5 h-5" />
+        <div className="flex items-center gap-3 border-b border-[#1b253a] pb-3.5">
+          <div className="w-8 h-8 rounded bg-[#162136] border border-[#263756] flex items-center justify-center text-teal-400">
+            <ShieldAlert className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-slate-100">
-              PRIORIS Operational Prototype Disclaimer
+            <h3 className="text-sm font-bold tracking-tight text-white uppercase">
+              Operational Scope & System Governance
             </h3>
-            <p className="text-xs text-amber-400 font-medium">
-              Important Governance, Ethics & Responsible-Use Notice
+            <p className="text-[11px] font-mono text-zinc-500">
+              PRIORIS Prototype Directive · PRIOSIS Hackathon
             </p>
           </div>
         </div>
 
-        {/* Key Governance Declarations */}
-        <div className="space-y-3 text-xs text-slate-300 leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
-          <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-800/40 text-amber-200">
-            <strong>Prototype Decision-Support Notice:</strong> PRIORIS is an engineering prototype designed for the PRIOSIS Round 2 Hackathon (Theme: AI for Climate Change). It is NOT an official disaster management platform or emergency dispatch tool.
+        {/* Core Principles */}
+        <div className="space-y-3 text-xs text-zinc-300 max-h-[60vh] overflow-y-auto pr-1">
+          <div className="p-3 rounded bg-[#101726] border border-[#1f2d47] text-[11px] leading-relaxed text-zinc-300">
+            <strong className="text-white block mb-0.5">Decision-Support Framework:</strong>
+            PRIORIS is an experimental decision-support prototype built for disaster incident commanders. It provides multi-criteria heuristic scoring and graph pathfinding, but does not autonomously execute civil protection actions.
           </div>
 
-          <ul className="space-y-2 list-none pt-1">
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
-              <span>
-                <strong>Human-in-the-Loop Authority:</strong> PRIORIS is strictly advisory. It generates risk insights and suggested routing to assist human incident coordinators; it never autonomously commands or dispatches real emergency units.
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
-              <span>
-                <strong>Official Channels First:</strong> Citizens in distress must use India's national emergency service <strong>112</strong> or refer to official bulletins issued by the <strong>National Disaster Management Authority (NDMA)</strong>, <strong>SACHET</strong>, and the <strong>India Meteorological Department (IMD)</strong>.
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
-              <span>
-                <strong>Prototype Weights & Heuristics:</strong> The normalized 5-factor risk scoring formula (Hazard 35%, Exposure 25%, Vulnerability 20%, Accessibility 10%, Scarcity 10%) represents initial demonstrative parameters and has not been certified by civil defense standards.
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
-              <span>
-                <strong>Simulated Telemetry Safeguard:</strong> Incidents, dam release rates, field reports, and response assets portrayed around Pune are synthetic scenarios for testing deterministic system behavior.
-              </span>
-            </li>
-          </ul>
+          <div className="space-y-2 pt-1 text-[11px]">
+            <div className="flex items-start gap-2.5 p-2 rounded bg-[#070b13] border border-[#172235]">
+              <span className="font-mono text-teal-400 font-bold mt-0.5">01</span>
+              <div>
+                <strong className="text-zinc-200 block">Human Commander Authority</strong>
+                <p className="text-zinc-400 mt-0.5 leading-normal">
+                  All resource assignments, route approvals, and evacuation orders require verified human-in-the-loop authorization.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2.5 p-2 rounded bg-[#070b13] border border-[#172235]">
+              <span className="font-mono text-teal-400 font-bold mt-0.5">02</span>
+              <div>
+                <strong className="text-zinc-200 block">Emergency Service Hierarchy</strong>
+                <p className="text-zinc-400 mt-0.5 leading-normal">
+                  Does not substitute India’s national emergency system (112), NDMA SACHET alert network, or IMD official meteorological warnings.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2.5 p-2 rounded bg-[#070b13] border border-[#172235]">
+              <span className="font-mono text-teal-400 font-bold mt-0.5">03</span>
+              <div>
+                <strong className="text-zinc-200 block">Exploratory Weight Calibration</strong>
+                <p className="text-zinc-400 mt-0.5 leading-normal">
+                  Factor weights (Hazard 35%, Exposure 25%, Vulnerability 20%, Access 10%, Scarcity 10%) are prototype baselines subject to municipal hydrology calibration.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Modal Footer */}
-        <div className="border-t border-slate-800 pt-4 flex items-center justify-between">
-          <span className="text-[11px] text-slate-400">
-            AI for Climate Change Hackathon Round 2
+        {/* Footer */}
+        <div className="border-t border-[#1b253a] pt-3 flex items-center justify-between">
+          <span className="text-[10px] font-mono text-zinc-500">
+            SYSTEM STATUS: OPERATIONAL PROTOTYPE
           </span>
           <button
             onClick={() => setIsDisclaimerOpen(false)}
-            className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg text-xs font-semibold shadow-lg shadow-teal-900/40 transition"
+            className="px-3.5 py-1.5 bg-teal-500 hover:bg-teal-400 text-slate-950 rounded text-xs font-semibold transition-colors"
           >
-            I Acknowledge & Agree
+            Acknowledge & Continue
           </button>
         </div>
       </div>

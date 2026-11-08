@@ -1,18 +1,17 @@
 import React, { useState } from 'react'
 import {
   LifeBuoy,
-  CheckCircle2,
-  XCircle,
   MapPin,
   Clock,
-  Navigation,
-  ArrowRight,
-  Shield,
-  Layers,
   Sparkles,
-  AlertTriangle,
   Building,
-  UserCheck,
+  Anchor,
+  Shield,
+  Ambulance,
+  Flame,
+  Truck,
+  Stethoscope,
+  CheckCircle,
 } from 'lucide-react'
 import { useIncidentContext } from '../../context/IncidentContext'
 import { rankResourcesForZone } from '../../services/resourceEngine'
@@ -27,7 +26,6 @@ export const ResourceAllocation: React.FC = () => {
     setSelectedZoneId,
     assignResource,
     unassignResource,
-    setActiveTab,
   } = useIncidentContext()
 
   const [filterType, setFilterType] = useState<string>('all')
@@ -47,27 +45,50 @@ export const ResourceAllocation: React.FC = () => {
   const availableCount = resources.filter(r => r.status === 'available').length
   const assignedCount = resources.filter(r => r.status === 'assigned').length
 
+  const getResourceIcon = (type: ResourceType) => {
+    switch (type) {
+      case 'rescue_boat':
+        return Anchor
+      case 'sdrf_team':
+      case 'ndrf_battalion':
+        return Shield
+      case 'ambulance':
+        return Ambulance
+      case 'fire_rescue':
+        return Flame
+      case 'relief_truck':
+        return Truck
+      case 'mobile_clinic':
+        return Stethoscope
+      default:
+        return LifeBuoy
+    }
+  }
+
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+    <div className="space-y-4">
+      {/* Header & Target Sector Selector */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#1b253b] pb-3">
         <div>
-          <h2 className="text-xl font-black text-slate-100 flex items-center gap-2">
-            <LifeBuoy className="w-5 h-5 text-teal-400" />
-            <span>Emergency Resource Matching & Allocation</span>
-          </h2>
-          <p className="text-xs text-slate-400">
-            Multi-criteria suitability matching: Equipment suitability, distance, and road transit viability.
+          <div className="flex items-center gap-2">
+            <h2 className="text-base font-bold text-white uppercase tracking-tight">
+              Emergency Resource Matching & Allocation
+            </h2>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#101726] text-teal-400 border border-[#1e2a42]">
+              {resources.length} UNITS TRACKED
+            </span>
+          </div>
+          <p className="text-xs text-zinc-400 mt-0.5">
+            Multi-criteria matching: Equipment specialization, transit distance, and road viability.
           </p>
         </div>
 
-        {/* Target Zone Selector */}
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400 font-semibold">Allocating For:</span>
+          <span className="text-[11px] font-mono text-zinc-400">DISPATCH TARGET:</span>
           <select
             value={targetZone.id}
             onChange={e => setSelectedZoneId(e.target.value)}
-            className="px-3 py-1.5 rounded-lg bg-slate-900 border border-teal-500/50 text-teal-300 font-bold text-xs focus:outline-none"
+            className="px-2.5 py-1.5 rounded bg-[#0a0f1b] border border-[#202b42] text-teal-300 font-mono text-xs font-semibold focus:outline-none"
           >
             {zones.map(z => (
               <option key={z.id} value={z.id}>
@@ -78,168 +99,161 @@ export const ResourceAllocation: React.FC = () => {
         </div>
       </div>
 
-      {/* Target Sector Requirement Banner */}
-      <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="space-y-1">
+      {/* Target Sector Logistics Tape */}
+      <div className="p-3 bg-[#0a0f1b] border border-[#1b253b] rounded flex flex-col md:flex-row md:items-center justify-between gap-3 font-mono text-xs">
+        <div className="space-y-0.5">
           <div className="flex items-center gap-2">
-            <span className="text-xs uppercase font-bold tracking-wider text-teal-400">
-              Sector Logistics Assessment
+            <span className="text-[10px] uppercase font-bold text-teal-400">
+              SECTOR LOGISTICS PROFILE
             </span>
-            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-              targetZone.priority === 'Critical'
-                ? 'bg-red-950 text-red-300 border border-red-700'
-                : 'bg-amber-950 text-amber-300 border border-amber-700'
-            }`}>
-              {targetZone.priority} Priority
-            </span>
+            <span className="text-zinc-600">·</span>
+            <span className="text-zinc-300 font-bold">{targetZone.name}</span>
           </div>
-          <h3 className="text-base font-bold text-slate-100">{targetZone.name}</h3>
-          <p className="text-xs text-slate-300">
-            Assigned Units: <strong className="text-teal-400">{targetZone.assignedResourceIds.length}</strong> · Active Incidents:{' '}
-            <strong className="text-amber-400">{targetZone.activeIncidentCount}</strong> · River Proximity:{' '}
-            <strong className="text-slate-200">{targetZone.riverProximityMeters}m</strong>
-          </p>
+          <div className="text-[11px] text-zinc-400 flex items-center gap-3">
+            <span>ASSIGNED: <strong className="text-teal-400 font-semibold">{targetZone.assignedResourceIds.length}</strong></span>
+            <span className="text-zinc-600">|</span>
+            <span>INCIDENTS: <strong className="text-amber-400 font-semibold">{targetZone.activeIncidentCount}</strong></span>
+            <span className="text-zinc-600">|</span>
+            <span>RIVER OFFSET: <strong className="text-zinc-200 font-semibold">{targetZone.riverProximityMeters}m</strong></span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-4 border-t md:border-t-0 md:border-l border-slate-800 pt-3 md:pt-0 md:pl-4">
-          <div className="text-center">
-            <span className="text-2xl font-black text-emerald-400">{availableCount}</span>
-            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Available</span>
+        <div className="flex items-center gap-3 border-t md:border-t-0 md:border-l border-[#1a2438] pt-2 md:pt-0 md:pl-3 text-center">
+          <div>
+            <span className="text-lg font-bold text-emerald-400">{availableCount}</span>
+            <span className="text-[9px] uppercase tracking-wider text-zinc-500 block">Available</span>
           </div>
-          <div className="text-center">
-            <span className="text-2xl font-black text-teal-400">{assignedCount}</span>
-            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Deployed</span>
+          <div>
+            <span className="text-lg font-bold text-teal-400">{assignedCount}</span>
+            <span className="text-[9px] uppercase tracking-wider text-zinc-500 block">Deployed</span>
           </div>
-          <div className="text-center">
-            <span className="text-2xl font-black text-purple-400">{targetZone.factors.resourceScarcity}</span>
-            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Scarcity Index</span>
+          <div>
+            <span className="text-lg font-bold text-purple-400">{targetZone.factors.resourceScarcity}</span>
+            <span className="text-[9px] uppercase tracking-wider text-zinc-500 block">Deficit Index</span>
           </div>
         </div>
       </div>
 
-      {/* Resource Inventory & Suitability Table */}
-      <div className="space-y-3">
+      {/* Resource Inventory List / Table */}
+      <div className="space-y-2">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <h3 className="text-sm font-bold text-slate-100 flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-teal-400" />
-            <span>AI Ranked Unit Suitability for {targetZone.name}</span>
-          </h3>
+          <span className="text-xs font-bold text-zinc-200 uppercase tracking-tight">
+            Ranked Response Assets for {targetZone.name}
+          </span>
 
-          {/* Filters */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 font-mono text-[10px]">
             <select
               value={filterType}
               onChange={e => setFilterType(e.target.value)}
-              className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-300"
+              className="px-2 py-1 rounded bg-[#0a0f1b] border border-[#1b263c] text-zinc-300 focus:outline-none"
             >
-              <option value="all">All Resource Types</option>
-              <option value="rescue_boat">Inflatable Boats</option>
-              <option value="sdrf_team">SDRF Teams</option>
-              <option value="ndrf_battalion">NDRF Battalions</option>
-              <option value="ambulance">ALS Ambulances</option>
-              <option value="fire_rescue">Fire Brigade Tenders</option>
-              <option value="relief_truck">Relief Logistics</option>
-              <option value="mobile_clinic">Mobile Clinics</option>
+              <option value="all">ALL TYPES</option>
+              <option value="rescue_boat">INFLATABLE BOATS</option>
+              <option value="sdrf_team">SDRF SQUADS</option>
+              <option value="ndrf_battalion">NDRF BATTALIONS</option>
+              <option value="ambulance">ALS AMBULANCES</option>
+              <option value="fire_rescue">HEAVY FIRE TENDERS</option>
+              <option value="relief_truck">RELIEF CONVOYS</option>
+              <option value="mobile_clinic">MOBILE CLINICS</option>
             </select>
 
             <select
               value={filterStatus}
               onChange={e => setFilterStatus(e.target.value)}
-              className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-300"
+              className="px-2 py-1 rounded bg-[#0a0f1b] border border-[#1b263c] text-zinc-300 focus:outline-none"
             >
-              <option value="all">All Statuses</option>
-              <option value="available">Available Only</option>
-              <option value="assigned">Assigned</option>
+              <option value="all">ALL STATUSES</option>
+              <option value="available">AVAILABLE ONLY</option>
+              <option value="assigned">ASSIGNED</option>
             </select>
           </div>
         </div>
 
         {/* Resources Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {filteredResources.map(res => {
             const isAvailable = res.status === 'available'
             const isAssignedToThisZone = res.assignedZoneId === targetZone.id
             const suitability = res.suitabilityScore || 70
+            const IconComponent = getResourceIcon(res.type)
 
             return (
               <div
                 key={res.id}
-                className={`p-4 rounded-xl border transition flex flex-col justify-between space-y-3 ${
+                className={`p-3 rounded border transition-colors flex flex-col justify-between space-y-2.5 ${
                   isAssignedToThisZone
-                    ? 'bg-teal-950/20 border-teal-500/70 shadow-lg shadow-teal-950/30'
+                    ? 'bg-[#0f1d2b] border-teal-500/70'
                     : isAvailable
-                    ? 'bg-slate-900 border-slate-800 hover:border-slate-700'
-                    : 'bg-slate-900/60 border-slate-800/80 opacity-80'
+                    ? 'bg-[#0a0f1b] border-[#1b253b] hover:border-[#283957]'
+                    : 'bg-[#080d18] border-[#162033] opacity-75'
                 }`}
               >
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-1">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-teal-400">
-                      {res.type.replace('_', ' ')} · {res.unitCode}
-                    </span>
+                    <div className="flex items-center gap-1.5 text-teal-400">
+                      <IconComponent className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider">
+                        {res.type.replace('_', ' ')}
+                      </span>
+                    </div>
                     <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold ${
                         isAvailable
-                          ? 'bg-emerald-950 text-emerald-300 border border-emerald-700'
-                          : 'bg-slate-800 text-slate-300 border border-slate-700'
+                          ? 'bg-emerald-950/70 text-emerald-400 border border-emerald-800/70'
+                          : 'bg-[#151f33] text-zinc-400 border border-[#22314e]'
                       }`}
                     >
                       {res.status.toUpperCase()}
                     </span>
                   </div>
 
-                  <h4 className="font-bold text-sm text-slate-100">{res.name}</h4>
-                  <div className="text-xs text-slate-400 flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-teal-400 shrink-0" />
-                    <span className="truncate">{res.stationName}</span>
+                  <div>
+                    <h4 className="font-semibold text-xs text-white leading-tight">{res.name}</h4>
+                    <div className="text-[10px] text-zinc-500 font-mono flex items-center gap-1 mt-0.5">
+                      <MapPin className="w-3 h-3 text-teal-400 shrink-0" />
+                      <span className="truncate">{res.stationName}</span>
+                    </div>
                   </div>
 
-                  {/* AI Suitability Score & Rationale */}
-                  <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-slate-400 font-semibold text-[11px]">
-                        AI Suitability Match
-                      </span>
-                      <span className="font-mono font-bold text-teal-300">
-                        {suitability}% Match
-                      </span>
+                  {/* Suitability Metric */}
+                  <div className="p-2 rounded bg-[#070b13] border border-[#162033] space-y-1 text-xs font-mono">
+                    <div className="flex items-center justify-between text-[10px]">
+                      <span className="text-zinc-500 uppercase">SUITABILITY SCORE</span>
+                      <span className="font-bold text-teal-300">{suitability}%</span>
                     </div>
-                    <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-teal-500 rounded-full"
-                        style={{ width: `${suitability}%` }}
-                      />
+                    <div className="w-full bg-[#182337] h-1 rounded-sm overflow-hidden">
+                      <div className="h-full bg-teal-500 rounded-sm" style={{ width: `${suitability}%` }} />
                     </div>
-                    <p className="text-[10px] text-slate-300 leading-normal pt-1">
+                    <p className="text-[9px] text-zinc-400 leading-normal pt-0.5">
                       {res.selectionReason}
                     </p>
                   </div>
                 </div>
 
-                {/* Bottom Actions */}
-                <div className="pt-2 border-t border-slate-800 flex items-center justify-between gap-2">
-                  <div className="text-[11px] text-slate-400">
-                    Dist: <strong className="text-slate-200">{res.distanceKm} km</strong> (~{res.etaMinutes}m ETA)
+                {/* Actions */}
+                <div className="pt-2 border-t border-[#172134] flex items-center justify-between gap-2 font-mono text-[10px]">
+                  <div className="text-zinc-400">
+                    DIST: <strong className="text-zinc-200">{res.distanceKm} km</strong> (~{res.etaMinutes}m ETA)
                   </div>
 
                   {isAssignedToThisZone ? (
                     <button
                       onClick={() => unassignResource(res.id)}
-                      className="px-3 py-1.5 rounded-lg bg-red-950 hover:bg-red-900 text-red-300 border border-red-800 text-xs font-semibold transition"
+                      className="px-2.5 py-1 rounded bg-red-950/80 hover:bg-red-900 text-red-300 border border-red-800 text-[10px] font-semibold transition-colors"
                     >
-                      Release Unit
+                      Release Asset
                     </button>
                   ) : isAvailable ? (
                     <button
                       onClick={() => assignResource(res.id, targetZone.id)}
-                      className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold transition shadow-md shadow-teal-950"
+                      className="px-2.5 py-1 rounded bg-teal-500 hover:bg-teal-400 text-slate-950 text-[10px] font-semibold transition-colors"
                     >
-                      Dispatch to Sector
+                      Dispatch Asset
                     </button>
                   ) : (
                     <button
                       onClick={() => unassignResource(res.id)}
-                      className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition"
+                      className="px-2 py-0.5 rounded bg-[#131d30] text-zinc-400 hover:text-white border border-[#202f4a] text-[9px] transition-colors"
                       title="Recall from current assignment"
                     >
                       Reassign
@@ -252,48 +266,46 @@ export const ResourceAllocation: React.FC = () => {
         </div>
       </div>
 
-      {/* Emergency Shelters Capacity Section */}
-      <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-          <div className="flex items-center gap-2">
-            <Building className="w-4 h-4 text-teal-400" />
-            <h3 className="text-sm font-bold text-slate-100">
+      {/* Designated Shelters Capacity Console */}
+      <div className="p-3 bg-[#0a0f1b] border border-[#1b253b] rounded space-y-2">
+        <div className="flex items-center justify-between border-b border-[#172134] pb-1.5">
+          <div className="flex items-center gap-1.5">
+            <Building className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="text-xs font-bold text-zinc-200 uppercase tracking-tight">
               Designated Emergency Shelters & Relief Camps
-            </h3>
+            </span>
           </div>
-          <span className="text-[10px] text-slate-400">
-            Total Capacity: {shelters.reduce((a, b) => a + b.capacityTotal, 0).toLocaleString()} Evacuees
+          <span className="text-[10px] font-mono text-zinc-500">
+            TOTAL CENSUS CAPACITY: {shelters.reduce((a, b) => a + b.capacityTotal, 0).toLocaleString()} EVACUEES
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
           {shelters.map(shl => {
             const pct = Math.round((shl.capacityOccupied / shl.capacityTotal) * 100)
             return (
               <div
                 key={shl.id}
-                className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs"
+                className="p-2.5 rounded bg-[#070b13] border border-[#162033] space-y-1.5 text-xs font-mono"
               >
                 <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-slate-200 truncate">{shl.name}</h4>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800 font-bold">
+                  <span className="font-semibold text-white text-[11px] truncate">{shl.name}</span>
+                  <span className="text-[8px] font-bold px-1 rounded bg-blue-950/80 text-blue-300 border border-blue-800">
                     {shl.status.toUpperCase()}
                   </span>
                 </div>
-                <div className="text-[11px] text-slate-400">
-                  Occupancy: <strong className="text-slate-100">{shl.capacityOccupied}</strong> / {shl.capacityTotal} ({pct}%)
+                <div className="text-[10px] text-zinc-400">
+                  CENSUS: <strong className="text-zinc-200">{shl.capacityOccupied}</strong> / {shl.capacityTotal} ({pct}%)
                 </div>
-                <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div className="w-full bg-[#162136] h-1 rounded-sm overflow-hidden">
                   <div
-                    className={`h-full rounded-full ${
-                      pct > 80 ? 'bg-amber-500' : 'bg-teal-500'
-                    }`}
+                    className={`h-full rounded-sm ${pct > 80 ? 'bg-amber-500' : 'bg-cyan-500'}`}
                     style={{ width: `${pct}%` }}
                   />
                 </div>
-                <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1">
-                  <span>{shl.hasMedicalPost ? '✓ Medical Post' : 'No Med Post'}</span>
-                  <span>{shl.hasPowerBackup ? '✓ Generator' : 'No Generator'}</span>
+                <div className="text-zinc-500 text-[9px] flex items-center justify-between pt-0.5">
+                  <span>{shl.hasMedicalPost ? '✓ Med Staging' : 'No Med Post'}</span>
+                  <span>{shl.hasPowerBackup ? '✓ Generator' : 'No Gen'}</span>
                 </div>
               </div>
             )

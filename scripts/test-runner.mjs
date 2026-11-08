@@ -97,3 +97,4 @@ assert(calculateRiskScore({ hazard: 35, exposure: 35, vulnerability: 35, accessi
 assert(calculateRiskScore({ hazard: 34.9, exposure: 34.9, vulnerability: 34.9, accessibilityRisk: 34.9, resourceScarcity: 34.9 }).priority === 'Low', '34.9 boundary is Low')
 
 console.log('\n🎉 ALL 16 CORE TESTS PASSED PERFECTLY!')
+

@@ -2,15 +2,13 @@ import React, { useState } from 'react'
 import {
   Radio,
   RefreshCw,
-  CheckCircle2,
-  AlertCircle,
   Database,
-  ExternalLink,
   CloudRain,
   Activity,
   Layers,
-  Shield,
+  CheckCircle2,
   Clock,
+  ExternalLink,
 } from 'lucide-react'
 import { useIncidentContext } from '../../context/IncidentContext'
 
@@ -28,189 +26,194 @@ export const DataSourcesView: React.FC = () => {
   const handleManualRefresh = async () => {
     setIsRefreshing(true)
     await refreshDataSources()
-    setTimeout(() => setIsRefreshing(false), 800)
+    setTimeout(() => setIsRefreshing(false), 600)
   }
 
   return (
-    <div className="space-y-6">
+    <div className="flex-1 p-4 lg:p-6 space-y-5 bg-[#0E0F11] overflow-y-auto max-w-5xl mx-auto text-[#ECEDEF]">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2A2D33] pb-4">
         <div>
-          <h2 className="text-xl font-black text-slate-100 flex items-center gap-2">
-            <Radio className="w-5 h-5 text-teal-400" />
-            <span>Data Sources, Telemetry & Ingestion Health</span>
-          </h2>
-          <p className="text-xs text-slate-400">
-            Transparent provenance tracking. Clear distinction between live external APIs and simulated demo data.
+          <h1 className="text-sm font-medium text-[#ECEDEF]">Data sources & ingestion telemetry</h1>
+          <p className="text-xs text-[#A1A5AD] mt-0.5">
+            Real-time feed provenance, health status, and live vs. simulated classification.
           </p>
         </div>
 
         <button
           onClick={handleManualRefresh}
           disabled={isRefreshing}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 disabled:opacity-50 text-white font-bold text-xs shadow-lg shadow-teal-950 transition"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#ECEDEF] hover:bg-[#FFFFFF] disabled:opacity-50 text-[#0E0F11] font-medium text-xs transition-colors self-start sm:self-auto shadow-sm"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
-          <span>Ping & Poll All Feeds</span>
+          <span>Refresh all feeds</span>
         </button>
       </div>
 
-      {/* Live Ingestion Telemetry Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Open-Meteo Live Weather Card */}
-        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CloudRain className="w-4 h-4 text-teal-400" />
-              <span className="font-bold text-sm text-slate-100">Open-Meteo Weather</span>
+      {/* Real-time Feeds Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        {/* Open-Meteo Weather Card */}
+        <div className="p-3.5 bg-[#15171A] border border-[#2A2D33] rounded space-y-3">
+          <div className="flex items-center justify-between border-b border-[#242833] pb-2">
+            <div className="flex items-center gap-2 text-white font-medium text-xs">
+              <CloudRain className="w-4 h-4 text-blue-400" />
+              <span>Open-Meteo ECMWF</span>
             </div>
             <span
-              className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+              className={`px-2 py-0.5 rounded text-[11px] font-medium ${
                 liveWeather?.isLive
-                  ? 'bg-emerald-950 text-emerald-300 border border-emerald-700'
-                  : 'bg-amber-950 text-amber-300 border border-amber-700'
+                  ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                  : 'bg-amber-950 text-amber-300 border border-amber-800'
               }`}
             >
-              {liveWeather?.isLive ? 'LIVE FEED' : 'CACHED FALLBACK'}
+              {liveWeather?.isLive ? 'Live API' : 'Cached fallback'}
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800">
-              <span className="text-[10px] text-slate-400 block">Temperature</span>
-              <span className="text-base font-bold text-slate-100">{liveWeather?.temperatureC ?? 27.2}°C</span>
+            <div className="p-2 rounded bg-[#111317] border border-[#242833]">
+              <span className="text-[11px] text-zinc-400 block">Temperature</span>
+              <span className="text-sm font-semibold text-white font-mono-numbers">{liveWeather?.temperatureC ?? 27.2}°C</span>
             </div>
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800">
-              <span className="text-[10px] text-slate-400 block">Precipitation</span>
-              <span className="text-base font-bold text-teal-300">{liveWeather?.precipitationMm ?? 14.5} mm</span>
+            <div className="p-2 rounded bg-[#111317] border border-[#242833]">
+              <span className="text-[11px] text-zinc-400 block">Precipitation</span>
+              <span className="text-sm font-semibold text-blue-400 font-mono-numbers">{liveWeather?.precipitationMm ?? 14.5} mm</span>
             </div>
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800">
-              <span className="text-[10px] text-slate-400 block">Humidity</span>
-              <span className="text-base font-bold text-slate-100">{liveWeather?.relativeHumidity ?? 85}%</span>
+            <div className="p-2 rounded bg-[#111317] border border-[#242833]">
+              <span className="text-[11px] text-zinc-400 block">Relative humidity</span>
+              <span className="text-sm font-semibold text-white font-mono-numbers">{liveWeather?.relativeHumidity ?? 85}%</span>
             </div>
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800">
-              <span className="text-[10px] text-slate-400 block">Wind Velocity</span>
-              <span className="text-base font-bold text-slate-100">{liveWeather?.windSpeedKmh ?? 24} km/h</span>
+            <div className="p-2 rounded bg-[#111317] border border-[#242833]">
+              <span className="text-[11px] text-zinc-400 block">Wind velocity</span>
+              <span className="text-sm font-semibold text-white font-mono-numbers">{liveWeather?.windSpeedKmh ?? 24} km/h</span>
             </div>
           </div>
-          <p className="text-[10px] text-slate-400">
-            Coordinates: Pune (18.5204° N, 73.8567° E). Free public API without client secret exposure.
+          <p className="text-[11px] text-zinc-400 leading-normal">
+            Coordinates: Pune (18.52° N, 73.85° E). Direct browser fetch without server proxy or API key exposure.
           </p>
         </div>
 
-        {/* CWC Hydrology Card */}
-        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-cyan-400" />
-              <span className="font-bold text-sm text-slate-100">CWC Mutha Hydrology</span>
+        {/* CWC Mutha Hydrology */}
+        <div className="p-3.5 bg-[#181b22] border border-[#242833] rounded-lg space-y-3">
+          <div className="flex items-center justify-between border-b border-[#242833] pb-2">
+            <div className="flex items-center gap-2 text-white font-medium text-xs">
+              <Activity className="w-4 h-4 text-amber-400" />
+              <span>Mutha Hydrology (CWC)</span>
             </div>
-            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-700">
-              SIMULATED DEMO
+            <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-amber-950 text-amber-300 border border-amber-800">
+              Simulated
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800">
-              <span className="text-[10px] text-slate-400 block">Dam Discharge</span>
-              <span className="text-base font-bold text-amber-400">{hydrology.outflowDischargeCusecs.toLocaleString()} cfs</span>
+            <div className="p-2 rounded bg-[#111317] border border-[#242833]">
+              <span className="text-[11px] text-zinc-400 block">Spillway discharge</span>
+              <span className="text-sm font-semibold text-amber-300 font-mono-numbers">{hydrology.outflowDischargeCusecs.toLocaleString()} cfs</span>
             </div>
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800">
-              <span className="text-[10px] text-slate-400 block">Reservoir Fill</span>
-              <span className="text-base font-bold text-slate-100">{hydrology.reservoirCapacityPercent}%</span>
+            <div className="p-2 rounded bg-[#111317] border border-[#242833]">
+              <span className="text-[11px] text-zinc-400 block">Reservoir level</span>
+              <span className="text-sm font-semibold text-white font-mono-numbers">{hydrology.reservoirCapacityPercent}%</span>
             </div>
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800">
-              <span className="text-[10px] text-slate-400 block">Gauge Height</span>
-              <span className="text-base font-bold text-slate-100">{hydrology.muthaRiverLevelMeters} m</span>
+            <div className="p-2 rounded bg-[#111317] border border-[#242833]">
+              <span className="text-[11px] text-zinc-400 block">River gauge level</span>
+              <span className="text-sm font-semibold text-white font-mono-numbers">{hydrology.muthaRiverLevelMeters} m</span>
             </div>
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800">
-              <span className="text-[10px] text-slate-400 block">Danger Level</span>
-              <span className="text-base font-bold text-red-400">{hydrology.dangerLevelMeters} m</span>
+            <div className="p-2 rounded bg-[#111317] border border-[#242833]">
+              <span className="text-[11px] text-zinc-400 block">Danger mark</span>
+              <span className="text-sm font-semibold text-red-400 font-mono-numbers">{hydrology.dangerLevelMeters} m</span>
             </div>
           </div>
-          <p className="text-[10px] text-slate-400">
-            Khadakwasla Dam upstream of Deccan Gymkhana causeway. High discharge creates backflow in Kasba Peth.
+          <p className="text-[11px] text-zinc-400 leading-normal">
+            Khadakwasla Dam discharge feeds the Mutha corridor, causing low causeway inundations when over 15,000 cfs.
           </p>
         </div>
 
-        {/* USGS Earthquake Multi-Hazard Feed */}
-        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+        {/* USGS Real-Time Seismic Feed */}
+        <div className="p-3.5 bg-[#181b22] border border-[#242833] rounded-lg space-y-3">
+          <div className="flex items-center justify-between border-b border-[#242833] pb-2">
+            <div className="flex items-center gap-2 text-white font-medium text-xs">
               <Database className="w-4 h-4 text-purple-400" />
-              <span className="font-bold text-sm text-slate-100">USGS Seismic Monitor</span>
+              <span>USGS Global Seismic</span>
             </div>
-            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-700">
-              LIVE USGS API
+            <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-950 text-emerald-300 border border-emerald-800">
+              Live API
             </span>
           </div>
 
-          <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1 text-[11px]">
+          <div className="space-y-1.5 max-h-24 overflow-y-auto pr-1 text-xs">
             {liveEarthquakes.map(eq => (
               <div
                 key={eq.id}
-                className="p-1.5 rounded bg-slate-950 border border-slate-800 flex items-center justify-between"
+                className="p-1.5 rounded bg-[#111317] border border-[#242833] flex items-center justify-between"
               >
-                <span className="text-slate-300 truncate max-w-[150px]">{eq.place}</span>
-                <span className="font-mono font-bold text-teal-300">M {eq.mag}</span>
+                <span className="text-zinc-300 truncate max-w-[150px] text-[11px]">{eq.place}</span>
+                <span className="font-semibold text-purple-400 font-mono-numbers">M {eq.mag}</span>
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-slate-400">
-            Secondary hazard demonstration. Real-time seismic fault tracking for cascading landslides.
+          <p className="text-[11px] text-zinc-400 leading-normal">
+            Compound risk telemetry monitoring for seismic activity impacting dam structures and flood embankments.
           </p>
         </div>
       </div>
 
-      {/* Main Data Registry Table */}
-      <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-        <h3 className="text-sm font-bold text-slate-100 flex items-center gap-1.5">
-          <Layers className="w-4 h-4 text-teal-400" />
-          <span>Integrated Services Health & Provenance Registry</span>
-        </h3>
+      {/* Master Service Ingestion Registry Table */}
+      <div className="bg-[#181b22] border border-[#242833] rounded-lg overflow-hidden">
+        <div className="px-4 py-3 border-b border-[#242833] flex items-center justify-between">
+          <span className="text-xs font-semibold text-white">
+            Ingestion Registry & Provenance Logs
+          </span>
+          <span className="text-[11px] text-zinc-400">
+            {dataSources.length} registered feeds
+          </span>
+        </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-400 text-[10px] uppercase tracking-wider">
-                <th className="py-2.5 px-3">Service Name</th>
-                <th className="py-2.5 px-3">Category</th>
-                <th className="py-2.5 px-3">Source Provider</th>
-                <th className="py-2.5 px-3">Status</th>
-                <th className="py-2.5 px-3">Latency</th>
-                <th className="py-2.5 px-3">Last Checked</th>
-                <th className="py-2.5 px-3">Notes</th>
+              <tr className="border-b border-[#242833] bg-[#14171d] text-zinc-400 text-[11px]">
+                <th className="py-2.5 px-4 font-medium">Service name</th>
+                <th className="py-2.5 px-4 font-medium">Category</th>
+                <th className="py-2.5 px-4 font-medium">Provider</th>
+                <th className="py-2.5 px-4 font-medium">Status</th>
+                <th className="py-2.5 px-4 font-medium">Latency</th>
+                <th className="py-2.5 px-4 font-medium">Last checked</th>
+                <th className="py-2.5 px-4 font-medium">Description</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80 text-slate-300">
+            <tbody className="divide-y divide-[#242833] text-zinc-300">
               {dataSources.map(src => {
                 const isLive = src.status === 'LIVE'
                 const isSimulated = src.status === 'SIMULATED'
 
                 return (
-                  <tr key={src.id} className="hover:bg-slate-950/40">
-                    <td className="py-3 px-3 font-bold text-slate-100 flex items-center gap-1.5">
-                      <span className={`w-2 h-2 rounded-full ${isLive ? 'bg-emerald-400' : isSimulated ? 'bg-amber-400' : 'bg-slate-400'}`} />
+                  <tr key={src.id} className="hover:bg-[#1f232c] transition-colors">
+                    <td className="py-2.5 px-4 font-medium text-white flex items-center gap-2">
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          isLive ? 'bg-emerald-400' : isSimulated ? 'bg-amber-400' : 'bg-zinc-500'
+                        }`}
+                      />
                       <span>{src.name}</span>
                     </td>
-                    <td className="py-3 px-3 text-slate-400">{src.category}</td>
-                    <td className="py-3 px-3 text-slate-400">{src.provider}</td>
-                    <td className="py-3 px-3">
+                    <td className="py-2.5 px-4 text-zinc-400">{src.category}</td>
+                    <td className="py-2.5 px-4 text-zinc-400">{src.provider}</td>
+                    <td className="py-2.5 px-4">
                       <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        className={`px-2 py-0.5 rounded text-[11px] font-medium ${
                           isLive
-                            ? 'bg-emerald-950 text-emerald-300 border border-emerald-700'
+                            ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
                             : isSimulated
-                            ? 'bg-amber-950 text-amber-300 border border-amber-700'
-                            : 'bg-slate-800 text-slate-300 border border-slate-700'
+                            ? 'bg-amber-950 text-amber-300 border border-amber-800'
+                            : 'bg-zinc-800 text-zinc-300 border border-zinc-700'
                         }`}
                       >
-                        {src.status}
+                        {src.status === 'LIVE' ? 'Live' : src.status === 'SIMULATED' ? 'Simulated' : src.status}
                       </span>
                     </td>
-                    <td className="py-3 px-3 font-mono text-slate-400">{src.latencyMs} ms</td>
-                    <td className="py-3 px-3 font-mono text-slate-400">{src.lastPolled}</td>
-                    <td className="py-3 px-3 text-[11px] text-slate-400 max-w-xs">{src.notes}</td>
+                    <td className="py-2.5 px-4 text-zinc-400 font-mono-numbers">{src.latencyMs} ms</td>
+                    <td className="py-2.5 px-4 text-zinc-500 font-mono-numbers">{src.lastPolled}</td>
+                    <td className="py-2.5 px-4 text-zinc-400 max-w-xs leading-normal">{src.notes}</td>
                   </tr>
                 )
               })}

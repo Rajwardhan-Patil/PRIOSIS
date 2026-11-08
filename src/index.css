@@ -2,82 +2,272 @@
 @import "leaflet/dist/leaflet.css";
 
 :root {
-  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-sans: 'IBM Plex Sans', 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  --font-devanagari: 'Noto Sans Devanagari', 'IBM Plex Sans', sans-serif;
   color-scheme: dark;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #0b1120; /* Deep dark navy */
-  color: #f1f5f9; /* Slate 100 */
+  background-color: #0E0F11; /* Neutral dark gray, no navy */
+  color: #ECEDEF;            /* High contrast primary text */
   font-family: var(--font-sans);
-  overflow-x: hidden;
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbars for dashboard panels */
+/* Devanagari font helper */
+.font-devanagari {
+  font-family: var(--font-devanagari);
+}
+
+/* Tabular mono font for numbers, coordinates, IDs */
+.font-mono-numbers {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Neutral minimal scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #0E0F11;
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #2A2D33;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #3B4048;
 }
 
-/* Custom styling for Leaflet controls & dark theme tiles */
+/* Leaflet Container & OpenStreetMap Direct Access Base Layer */
 .leaflet-container {
   width: 100%;
   height: 100%;
-  background-color: #0b1329 !important;
-  font-family: inherit;
+  background-color: #0E0F11 !important;
+  font-family: var(--font-sans) !important;
 }
 
+/* Neutral high-contrast dark filter for direct OpenStreetMap tiles */
+.leaflet-tile-pane {
+  filter: brightness(0.65) invert(1) contrast(2.4) hue-rotate(200deg) saturate(0.18) brightness(0.85);
+  transition: filter 150ms ease-out;
+}
+
+/* Clean popup styling matching ICU/air-traffic monitor design */
 .leaflet-popup-content-wrapper {
-  background: #0f172a !important;
-  color: #f8fafc !important;
-  border: 1px solid #1e293b;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7);
+  background: #15171A !important;
+  color: #ECEDEF !important;
+  border: 1px solid #2A2D33 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 10px 12px !important;
+  line-height: 1.4 !important;
 }
 
 .leaflet-popup-tip {
-  background: #0f172a !important;
-  border-top: 1px solid #1e293b;
+  background: #15171A !important;
+  border: 1px solid #2A2D33 !important;
+}
+
+/* Clean minimal zoom controls */
+.leaflet-bar {
+  border: 1px solid #2A2D33 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  border-radius: 4px !important;
+  overflow: hidden;
 }
 
 .leaflet-bar a {
-  background-color: #0f172a !important;
-  color: #38bdf8 !important;
-  border-bottom: 1px solid #1e293b !important;
+  background-color: #15171A !important;
+  color: #A1A5AD !important;
+  border-bottom: 1px solid #2A2D33 !important;
+  transition: background-color 150ms ease-out;
 }
 
 .leaflet-bar a:hover {
-  background-color: #1e293b !important;
+  background-color: #1C1F23 !important;
+  color: #ECEDEF !important;
 }
 
-/* Blinking pulse animation for critical incident markers */
-@keyframes alert-pulse {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-  70% { transform: scale(1.05); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+/* Focus rings: 2px light with offset */
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid #ECEDEF;
+  outline-offset: 1px;
 }
 
-.critical-pulse {
-  animation: alert-pulse 2s infinite;
+/* Transitions: strictly 150ms ease-out, no glow or pulsing */
+* {
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 
-@keyframes teal-glow {
-  0%, 100% { opacity: 0.8; }
-  50% { opacity: 0.3; }
+/* Dynamic Animated River & Route Flow */
+@keyframes river-flow {
+  from {
+    stroke-dashoffset: 32;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
-.radar-sweep {
-  animation: teal-glow 3s infinite ease-in-out;
+@keyframes route-flow {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-river-flow {
+  stroke-dasharray: 8, 8 !important;
+  animation: river-flow 1.4s linear infinite !important;
+}
+
+.animate-route-flow {
+  stroke-dasharray: 6, 6 !important;
+  animation: route-flow 0.85s linear infinite !important;
+}
+
+/* Pulsing radar for critical emergency wards */
+@keyframes radar-beacon {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.85;
+  }
+  60% {
+    transform: scale(1.9);
+    opacity: 0.15;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.animate-radar-beacon {
+  animation: radar-beacon 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Light / White Theme Mode Overrides */
+html.light,
+html.light body,
+[data-theme="light"],
+[data-theme="light"] body {
+  background-color: #F4F5F7 !important;
+  color: #111827 !important;
+  color-scheme: light;
+}
+
+html.light .bg-\[\#0E0F11\],
+[data-theme="light"] .bg-\[\#0E0F11\] {
+  background-color: #F4F5F7 !important;
+}
+
+html.light .bg-\[\#15171A\],
+[data-theme="light"] .bg-\[\#15171A\] {
+  background-color: #FFFFFF !important;
+}
+
+html.light .bg-\[\#1C1F23\],
+[data-theme="light"] .bg-\[\#1C1F23\] {
+  background-color: #F0F2F5 !important;
+}
+
+html.light .border-\[\#2A2D33\],
+[data-theme="light"] .border-\[\#2A2D33\] {
+  border-color: #E2E4E8 !important;
+}
+
+html.light .text-\[\#ECEDEF\],
+[data-theme="light"] .text-\[\#ECEDEF\] {
+  color: #111827 !important;
+}
+
+html.light .text-\[\#A1A5AD\],
+[data-theme="light"] .text-\[\#A1A5AD\] {
+  color: #4B5563 !important;
+}
+
+html.light .text-\[\#858A93\],
+[data-theme="light"] .text-\[\#858A93\] {
+  color: #6B7280 !important;
+}
+
+/* Light mode primary dispatch action button: dark fill for highest contrast */
+html.light .bg-\[\#ECEDEF\],
+[data-theme="light"] .bg-\[\#ECEDEF\] {
+  background-color: #111827 !important;
+  color: #FFFFFF !important;
+}
+
+html.light .bg-\[\#ECEDEF\]:hover,
+[data-theme="light"] .bg-\[\#ECEDEF\]:hover {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+/* Light mode tile pane: clean natural OSM tiles */
+html.light .leaflet-tile-pane,
+[data-theme="light"] .leaflet-tile-pane {
+  filter: saturate(0.85) contrast(1.05) brightness(1.0);
+}
+
+html.light .leaflet-container,
+[data-theme="light"] .leaflet-container {
+  background-color: #E5E7EB !important;
+}
+
+html.light .leaflet-popup-content-wrapper,
+[data-theme="light"] .leaflet-popup-content-wrapper {
+  background: #FFFFFF !important;
+  color: #111827 !important;
+  border-color: #E5E7EB !important;
+}
+
+html.light .leaflet-popup-tip,
+[data-theme="light"] .leaflet-popup-tip {
+  background: #FFFFFF !important;
+  border-color: #E5E7EB !important;
+}
+
+html.light .leaflet-bar a,
+[data-theme="light"] .leaflet-bar a {
+  background-color: #FFFFFF !important;
+  color: #374151 !important;
+  border-bottom: 1px solid #E5E7EB !important;
+}
+
+html.light .leaflet-bar a:hover,
+[data-theme="light"] .leaflet-bar a:hover {
+  background-color: #F3F4F6 !important;
+}
+
+/* One-second pulse ring for newly escalated critical ward */
+@keyframes critical-escalate-ring {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.animate-critical-ring {
+  animation: critical-escalate-ring 1s cubic-bezier(0, 0, 0.2, 1) forwards;
 }

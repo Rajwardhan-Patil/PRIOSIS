@@ -33,9 +33,18 @@ export interface FactorContributions {
   resourceScarcity: number
 }
 
+export interface ActionChecklistStep {
+  id: string
+  action: string
+  urgency: 'Do now' | 'Within 30 min' | 'Within 1 hr'
+  isDone: boolean
+  assignedUnitId?: string
+}
+
 export interface Zone {
   id: string
   name: string
+  nameMr?: string
   wardNumber: number
   areaKm2: number
   center: [number, number] // [lat, lng]
@@ -52,6 +61,7 @@ export interface Zone {
   factorContributions: FactorContributions
   topDrivers: string[]
   recommendedActions: string[]
+  checklistSteps?: ActionChecklistStep[]
   activeIncidentCount: number
   assignedResourceIds: string[]
   dataFreshnessMinutes: number

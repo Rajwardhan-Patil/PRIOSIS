@@ -4,10 +4,8 @@ import {
   ChevronRight,
   ChevronLeft,
   X,
-  CheckCircle,
   Play,
   RotateCcw,
-  Sparkles,
 } from 'lucide-react'
 import { useIncidentContext } from '../../context/IncidentContext'
 
@@ -24,7 +22,6 @@ export const JudgeGuidedTour: React.FC = () => {
     toggleRoadBlockage,
     resetToDemoDefaults,
     roadSegments,
-    rankedZones,
     resources,
   } = useIncidentContext()
 
@@ -33,9 +30,9 @@ export const JudgeGuidedTour: React.FC = () => {
   const tourSteps = [
     {
       step: 1,
-      title: 'Inspect Dashboard & Ranked Zones',
-      description: 'Observe the initial priority ranking. Kasba Peth (Old City) is prioritized as Critical (#1) due to dense riverbank exposure and elderly population.',
-      actionText: 'View Ranked Zones',
+      title: 'Inspect Initial Priority Queue',
+      description: 'Observe baseline rankings. Kasba Peth (Old City) is prioritized as Critical (#1) due to river proximity and dense elderly population.',
+      actionText: 'Inspect Priority Queue',
       onExecute: () => {
         setActiveTab('dashboard')
         setSelectedZoneId('Z-PUNE-01')
@@ -43,9 +40,9 @@ export const JudgeGuidedTour: React.FC = () => {
     },
     {
       step: 2,
-      title: 'Inspect Risk Breakdown in Risk Analysis',
-      description: 'Inspect the 5-factor mathematical weighting (Hazard 35%, Exposure 25%, Vulnerability 20%, Accessibility 10%, Scarcity 10%). Notice the deterministic factor contributions.',
-      actionText: 'Open Risk Breakdown',
+      title: 'Examine 5-Factor Mathematical Model',
+      description: 'Inspect factor weights (Hazard 35%, Exposure 25%, Vulnerability 20%, Accessibility 10%, Scarcity 10%) and factor contributions.',
+      actionText: 'View Factor Model',
       onExecute: () => {
         setActiveTab('risk')
         setSelectedZoneId('Z-PUNE-01')
@@ -54,8 +51,8 @@ export const JudgeGuidedTour: React.FC = () => {
     {
       step: 3,
       title: 'Simulate Heavy Cloudburst in Kothrud',
-      description: 'Create a simulated 115mm/hr extreme rainfall and flash flood incident in Kothrud (Ward 18), currently ranked low/moderate (#5).',
-      actionText: 'Trigger Cloudburst Incident',
+      description: 'Trigger a simulated 115mm/hr extreme rainfall and flash flood incident in Kothrud (Ward 18), currently ranked at Moderate (#5).',
+      actionText: 'Inject Cloudburst Incident',
       onExecute: () => {
         createIncident({
           zoneId: 'Z-PUNE-05',
@@ -66,16 +63,16 @@ export const JudgeGuidedTour: React.FC = () => {
           coordinates: [18.5085, 73.8090],
           waterDepthCm: 90,
           reporterType: 'sensor_iot',
-          description: 'Sudden convective cloudburst dropped 115mm in 45 mins. Ramnadi culvert overwhelmed; water logging trapping vehicles on Paud Road.',
+          description: 'Convective cloudburst dropped 115mm in 45 mins. Ramnadi culvert overwhelmed; water logging trapping vehicles on Paud Road.',
         })
         setActiveTab('incidents')
       },
     },
     {
       step: 4,
-      title: 'Observe Instant Ranking Recalculation',
-      description: 'Check how the real-time scoring engine immediately recalculated Kothrud\'s hazard score from 44 to 88+, causing Kothrud to jump to HIGH / CRITICAL rank!',
-      actionText: 'Verify Ranking Shift',
+      title: 'Verify Instant Dynamic Re-Ranking',
+      description: 'Observe Kothrud\'s hazard score jump dynamically from 44 to 88+, moving Kothrud into the Critical/High priority tier immediately.',
+      actionText: 'Verify Queue Shift',
       onExecute: () => {
         setActiveTab('dashboard')
         setSelectedZoneId('Z-PUNE-05')
@@ -83,9 +80,9 @@ export const JudgeGuidedTour: React.FC = () => {
     },
     {
       step: 5,
-      title: 'Recommend & Assign Response Unit',
-      description: 'Open Resource Allocation. The AI recommendation engine evaluates suitability, equipment, and travel distance to recommend available NDRF/SDRF assets.',
-      actionText: 'Assign NDRF Boat Unit',
+      title: 'Match & Dispatch Emergency Unit',
+      description: 'AI recommendation engine calculates suitability based on equipment and proximity to assign NDRF Inflatable Boat Team 1.',
+      actionText: 'Dispatch Rescue Unit',
       onExecute: () => {
         const boat = resources.find(r => r.type === 'rescue_boat' && r.status === 'available')
         if (boat) {
@@ -96,9 +93,9 @@ export const JudgeGuidedTour: React.FC = () => {
     },
     {
       step: 6,
-      title: 'Simulate Road Blockage (Karve Road)',
-      description: 'Mark Karve Road (Kothrud -> Deccan arterial) as blocked due to 85cm waterlogging. This cuts off direct transit and threatens responder access.',
-      actionText: 'Simulate Road Blockage',
+      title: 'Simulate Arterial Road Blockage',
+      description: 'Mark Karve Road (Kothrud -> Deccan arterial) as impassable due to 85cm waterlogging, severing direct responder transit.',
+      actionText: 'Sever Corridor',
       onExecute: () => {
         const seg = roadSegments.find(s => s.id === 'SEG-01')
         if (seg && !seg.isBlocked) {
@@ -109,18 +106,18 @@ export const JudgeGuidedTour: React.FC = () => {
     },
     {
       step: 7,
-      title: 'Inspect Dijkstra Route Replanning',
-      description: 'Observe the autonomous graph rerouting. The original flooded route is flagged UNSAFE in red dashed lines; the safe detour is calculated and highlighted.',
-      actionText: 'Inspect Safe Detour Route',
+      title: 'Dijkstra Graph Rerouting',
+      description: 'The graph routing engine flags the flooded path as unsafe and calculates a safe alternative bypass with detour distance and delay telemetry.',
+      actionText: 'Inspect Detour Route',
       onExecute: () => {
         setActiveTab('routing')
       },
     },
     {
       step: 8,
-      title: 'Verify Audit Trail & Summary',
-      description: 'Every action (incident creation, score recalculation, resource assignment, route blockage, rerouting) is chronologically recorded in the immutable audit trail.',
-      actionText: 'View Completed Audit Log',
+      title: 'Audit Log & Provenance Review',
+      description: 'Review the chronological, tamper-evident audit trail capturing every incident injection, recalculation, unit dispatch, and route change.',
+      actionText: 'View Audit Records',
       onExecute: () => {
         setActiveTab('dashboard')
       },
@@ -130,76 +127,72 @@ export const JudgeGuidedTour: React.FC = () => {
   const current = tourSteps[demoTourStep - 1]
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 md:left-68 md:right-8 z-[2000] bg-slate-900/95 backdrop-blur-md border border-teal-500/50 rounded-2xl p-4 shadow-2xl shadow-black/80 text-slate-100 animate-in slide-in-from-bottom-4 duration-300">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-        {/* Left: Step counter & badge */}
+    <div className="fixed bottom-0 left-0 right-0 z-[2000] bg-[#090d18]/95 backdrop-blur-md border-t border-[#1e2a42] text-zinc-200 px-4 py-2.5 shadow-2xl">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        {/* Step Info */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-teal-500/20 border border-teal-400/40 flex items-center justify-center text-teal-400 font-bold shrink-0">
-            <Compass className="w-5 h-5" />
+          <div className="w-7 h-7 rounded bg-[#131d30] border border-[#233554] flex items-center justify-center text-teal-400 font-mono text-xs font-bold shrink-0">
+            {demoTourStep}
           </div>
-          <div>
+          <div className="space-y-0.5">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-teal-950 text-teal-300 border border-teal-800">
-                Judge Walkthrough · Step {demoTourStep} of {tourSteps.length}
+              <span className="text-[9px] font-mono uppercase font-bold tracking-wider px-1.5 py-0.2 rounded bg-[#101827] text-teal-400 border border-[#1d2a44]">
+                EVALUATION STEP {demoTourStep} OF {tourSteps.length}
               </span>
-              <h4 className="font-bold text-sm text-slate-100">{current.title}</h4>
+              <span className="text-xs font-semibold text-white">{current.title}</span>
             </div>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
+            <p className="text-[11px] text-zinc-400 max-w-2xl leading-normal">
               {current.description}
             </p>
           </div>
         </div>
 
-        {/* Right: Actions */}
+        {/* Action Controls */}
         <div className="flex items-center gap-2 self-end md:self-center shrink-0">
-          {/* Quick Action Button */}
           <button
             onClick={current.onExecute}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs shadow-md shadow-teal-950 transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-teal-500 hover:bg-teal-400 text-slate-950 font-semibold text-xs transition-colors shadow-sm"
           >
-            <Play className="w-3.5 h-3.5 fill-current" />
+            <Play className="w-3 h-3 fill-current" />
             <span>{current.actionText}</span>
           </button>
 
-          {/* Prev / Next controls */}
-          <div className="flex items-center bg-slate-800 rounded-lg p-0.5 border border-slate-700">
+          <div className="flex items-center bg-[#101726] rounded border border-[#1f2b42] p-0.5">
             <button
               disabled={demoTourStep <= 1}
               onClick={() => setDemoTourStep(demoTourStep - 1)}
-              className="p-1 rounded text-slate-300 hover:text-white disabled:opacity-40 disabled:hover:text-slate-300 transition"
+              className="p-1 rounded text-zinc-400 hover:text-white disabled:opacity-30 transition-colors"
               title="Previous Step"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-3.5 h-3.5" />
             </button>
-            <span className="text-[11px] font-bold px-2 text-slate-400">
+            <span className="text-[10px] font-mono px-2 text-zinc-400">
               {demoTourStep}/{tourSteps.length}
             </span>
             <button
               disabled={demoTourStep >= tourSteps.length}
               onClick={() => setDemoTourStep(demoTourStep + 1)}
-              className="p-1 rounded text-slate-300 hover:text-white disabled:opacity-40 disabled:hover:text-slate-300 transition"
+              className="p-1 rounded text-zinc-400 hover:text-white disabled:opacity-30 transition-colors"
               title="Next Step"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          {/* Reset Demo */}
           <button
             onClick={resetToDemoDefaults}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-700 transition"
-            title="Reset Tour & Demo Data"
+            className="p-1.5 rounded text-zinc-400 hover:text-white bg-[#101726] border border-[#1f2b42] transition-colors"
+            title="Reset simulation to default state"
           >
-            <RotateCcw className="w-4 h-4" />
+            <RotateCcw className="w-3 h-3" />
           </button>
 
-          {/* Close Tour */}
           <button
             onClick={() => setIsTourActive(false)}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-700 transition"
-            title="Minimize Tour Bar"
+            className="p-1.5 rounded text-zinc-400 hover:text-white bg-[#101726] border border-[#1f2b42] transition-colors"
+            title="Minimize evaluation bar"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3 h-3" />
           </button>
         </div>
       </div>
